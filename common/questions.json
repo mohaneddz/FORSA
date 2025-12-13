@@ -1,0 +1,16 @@
+{
+  "equipe": "GhostTruth",
+  "question": {
+    "Creation_Pack_IDOOM_Fibre": {
+      "Q1": "Quel est l’objectif du guide « Création nouveau Pack IDOOM Fibre » ?",
+      "Q2": "Quelles sont les conditions à prendre en considération avant la création d’un nouveau Pack IDOOM Fibre ?",
+      "Q3": "Quelle est la différence entre la création VOIP et la création FTTH dans le NGBSS ?",
+      "Q4": "Faut-il ajouter une offre supplémentaire lors de la création d’un Pack FTTH ?",
+      "Q5": "Quels sont les frais d’accès du Pack IDOOM Fibre ?",
+      "Q6": "Quels sont les frais d’installation et de raccordement du Pack IDOOM Fibre ?",
+      "Q7": "Où peut-on trouver plus de détails sur l’argumentaire de vente du Pack IDOOM Fibre ?",
+      "Q8": "Quelle est la première étape pour créer un nouveau Pack IDOOM Fibre dans le NGBSS ?",
+      "Q9": "Comment sélectionner et synchroniser l’ONT lors de la création du Pack IDOOM Fibre ?"
+    }
+  }
+}
