@@ -1,0 +1,5 @@
+gen/
+data/
+cache/
+__pycache__/
+logs/
