@@ -1,0 +1,1 @@
+watchmedo auto-restart --recursive -- python main.py
