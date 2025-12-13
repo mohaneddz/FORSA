@@ -1,0 +1,28 @@
+{
+  "equipe": "GhostTruth",
+  "question": {
+    "Idoom_ADSL": {
+      "Q1": "Quels sont les débits disponibles pour l'offre Idoom ADSL ?",
+      "Q2": "Quel est le tarif de l'abonnement mensuel pour 10 Mbps ?"
+    },
+    "Idoom_Fibre": {
+      "Q3": "Quels sont les avantages de l'offre Idoom Fibre ?",
+      "Q4": "Est-ce que le modem est inclus dans l'offre Idoom Fibre ?"
+    },
+    "4G_LTE": {
+      "Q5": "Quel est le volume internet offert pour le rechargement de 1000 DA ?",
+      "Q6": "Quelle est la durée de validité de la recharge de 2500 DA ?"
+    },
+    "Definitions": {
+      "Q7": "C'est quoi l'ADSL ?",
+      "Q8": "ما معنى الألياف البصرية؟"
+    },
+    "Lists": {
+      "Q9": "Quels sont tous les débits disponibles ?",
+      "Q10": "Listez toutes les catégories éligibles à l'offre."
+    },
+    "Contact": {
+      "Q11": "J'ai un problème, qui dois-je contacter ?"
+    }
+  }
+}

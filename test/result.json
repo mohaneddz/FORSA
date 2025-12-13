@@ -1,0 +1,17 @@
+{
+  "equipe": "GhostTruth",
+  "reponses": {
+    "Idoom_ADSL": {
+      "Q1": "L'offre Idoom ADSL propose un débit maximum de 20 Mbit/s en réception (download) et 1 Mbit/s en émission (upload).",
+      "Q2": "Le tarif mensuel pour un abonnement de 10 Mbps est de 49,99 €."
+    },
+    "Idoom_Fibre": {
+      "Q3": "Selon la documentation, les avantages de l'offre Idoom Fibre incluent : un débit de 1 Gbit/s en download et 600 Mbit/s en upload, un service de téléphonie fixe illimitée vers les fixes et mobiles de 115 destinations, la TV by Canal+ avec 180 chaînes, et un forfait mobile Série Free 5G de 210 Go avec appels et SMS illimités inclus.",
+      "Q4": "Oui, le modem est inclus dans l'offre Idoom Fibre et est fourni gratuitement."
+    },
+    "4G_LTE": {
+      "Q5": "Le rechargement de 1000 DA offre un volume internet de 1,5 Go.",
+      "Q6": "La durée de validité d'une recharge de 2500 DA est de 60 jours à compter de la date d'achat."
+    }
+  }
+}
