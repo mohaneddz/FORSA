@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+requests
+faiss-cpu
+numpy
+sentence-transformers
+unstructured
+python-multipart
+gradio
+watchdog
+pymupdf
+python-docx
+markdown
+beautifulsoup4
+google-generativeai
