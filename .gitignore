@@ -3,3 +3,5 @@ data/
 cache/
 __pycache__/
 logs/
+.env*
+plan.md
