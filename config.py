@@ -57,9 +57,15 @@ class Config:
     ENABLE_LLM_WARMUP = False  # Enable LLM service warmup on application startup
 
     # Reranker settings
-    USE_RERANKER = False  # Set to False to disable reranking
+    USE_RERANKER = True  # Set to False to disable reranking
     RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+    RERANK_CANDIDATES = 10  # hybrid candidates scored per question
+    # Sigmoid reranker score a chunk needs to reach the LLM. On eval/questions.json
+    # off-topic questions top out below 0.01 and every in-scope question keeps
+    # its source at any value from 0.01 to 0.3 (see eval/threshold_sweep.py).
+    RERANK_MIN_SCORE = 0.05
     RERANK_BATCH_SIZE = 32
     RERANK_MAX_LENGTH = 512
+    SAME_LANGUAGE_BONUS = 0.05  # ranking bonus for chunks written in the question's language
 
 config = Config()
