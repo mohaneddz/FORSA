@@ -37,7 +37,7 @@ class Config:
     TOP_K_LEXICAL = 20
     HYBRID_W_SEM = 0.65
     HYBRID_W_LEX = 0.35
-    LEXICAL_SCORE_FLOOR = 0.0  
+    LEXICAL_SCORE_FLOOR = 0.0
 
     SIMILARITY_THRESHOLD = 0
     MIN_SOURCES = 1
@@ -48,10 +48,6 @@ class Config:
 
     DEBUG_LOG_RETRIEVAL = False
     ASSERT_EMBEDDING_DIM = True
-    
-    # Answer Fixer Settings
-    ENABLE_ANSWER_FIXER = False  # Enable strict RAG answer post-processing
-    ANSWER_FIXER_TEMPERATURE = 0.1  # Low temperature for strict, deterministic corrections
 
     # LLM Service Settings
     ENABLE_LLM_WARMUP = False  # Enable LLM service warmup on application startup

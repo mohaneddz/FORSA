@@ -4,7 +4,6 @@ from schemas import StructuredChatRequest, StructuredChatResponse
 from services.rag_service import rag_service
 from services.llm_service import llm_service
 from utils.logging_utils import log_execution_time
-from utils.answer_fixer import fix_rag_answer
 import logging
 import time
 import json
@@ -133,7 +132,6 @@ async def answer_question(question_text: str, filtered_chunks: list, messages: l
     grounding checks. Questions with no retrieved context are refused without
     an LLM call. Returns answer string.
     """
-    from config import config
     from utils.validation_utils import validate_answer_grounding
 
     question_start_time = time.time()
@@ -160,26 +158,6 @@ async def answer_question(question_text: str, filtered_chunks: list, messages: l
             logger.error(f"Failed to parse LLM JSON response: {e}")
             answer = "Erreur: Réponse invalide du système."
 
-        # 5.25. Apply answer fixer if enabled
-        if config.ENABLE_ANSWER_FIXER:
-            # Convert chunks to source format for fixer
-            source_list = []
-            for chunk in filtered_chunks:
-                evidence_text = chunk.chunk.content  # Extract evidence from chunk
-                source_list.append({
-                    "file": chunk.chunk.metadata.get("file", "unknown"),
-                    "score": chunk.score,
-                    "evidence": evidence_text
-                })
-
-            original_answer = answer
-            answer = await fix_rag_answer_async(question_text, source_list, answer)
-
-            if answer != original_answer:
-                logger.info(f"Answer fixer applied corrections")
-                logger.debug(f"Original: {original_answer[:100]}...")
-                logger.debug(f"Fixed: {answer[:100]}...")
-
         # 5.5. Validate answer grounding (CPU-bound, but fast)
         validation_result = validate_answer_grounding(answer, filtered_chunks)
 
@@ -205,14 +183,3 @@ async def answer_question(question_text: str, filtered_chunks: list, messages: l
         question_duration = time.time() - question_start_time
         logger.info(f"[END] Question completed in {question_duration:.2f}s: {question_preview}")
 
-
-async def fix_rag_answer_async(question_text: str, source_list: list, answer: str) -> str:
-    """
-    Async wrapper for answer fixer to avoid blocking the event loop.
-    """
-    return await asyncio.to_thread(
-        fix_rag_answer,
-        question_text,
-        source_list,
-        answer
-    )
