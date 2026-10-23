@@ -1,0 +1,1629 @@
+{
+  "summary": {
+    "label": "baseline",
+    "config": {
+      "useReranker": false,
+      "similarityThreshold": 0,
+      "topK": 20,
+      "indexVectors": 3092,
+      "device": "cuda:0",
+      "embeddingDtype": "torch.float32",
+      "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU"
+    },
+    "modelLoadSeconds": 32.37,
+    "gpuPeakMemoryMb": 4342,
+    "retrieval": {
+      "all": {
+        "hit@1": 0.92,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "hitInContext": 1.0,
+        "mrr": 0.957,
+        "keywordRecall": 0.99,
+        "n": 50
+      },
+      "fr": {
+        "hit@1": 0.914,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "hitInContext": 1.0,
+        "mrr": 0.952,
+        "keywordRecall": 0.986,
+        "n": 35
+      },
+      "ar": {
+        "hit@1": 0.933,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "hitInContext": 1.0,
+        "mrr": 0.967,
+        "keywordRecall": 1.0,
+        "n": 15
+      }
+    },
+    "refusedOutOfScope": 0.0,
+    "contextChunksMean": 13.7,
+    "promptTokensMean": 3332,
+    "latencyMs": {
+      "scope": {
+        "mean": 0.23,
+        "p50": 0.22,
+        "p95": 0.32
+      },
+      "analyze": {
+        "mean": 0.11,
+        "p50": 0.11,
+        "p95": 0.16
+      },
+      "embed": {
+        "mean": 46.56,
+        "p50": 45.55,
+        "p95": 53.78
+      },
+      "faiss": {
+        "mean": 0.66,
+        "p50": 0.62,
+        "p95": 0.87
+      },
+      "lexical": {
+        "mean": 37.8,
+        "p50": 37.01,
+        "p95": 49.2
+      },
+      "merge": {
+        "mean": 0.29,
+        "p50": 0.29,
+        "p95": 0.42
+      },
+      "filter_and_prompt": {
+        "mean": 0.31,
+        "p50": 0.28,
+        "p95": 0.51
+      },
+      "total": {
+        "mean": 86.07,
+        "p50": 84.36,
+        "p95": 101.67
+      }
+    },
+    "batch": {
+      "questions": 55,
+      "concurrentThreadsSeconds": 5.739
+    }
+  },
+  "questions": [
+    {
+      "id": "fr01",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 15,
+      "contextDocs": [
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_AR_version_2",
+        "Argumentaire_Mise_à_jour_offre_idoom_fibre_ADSL_et_VDSL_17072025_version_FR",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_française_-",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_français",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13406,
+      "promptTokens": 3767,
+      "timingsMs": {
+        "scope": 0.31,
+        "analyze": 0.14,
+        "embed": 51.49,
+        "faiss": 0.82,
+        "lexical": 45.11,
+        "merge": 0.35,
+        "filter_and_prompt": 0.48,
+        "total": 98.79
+      }
+    },
+    {
+      "id": "fr02",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 2,
+      "contextChunks": 7,
+      "contextDocs": [
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_AR_version_2",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2"
+      ],
+      "keywordRecall": 0.5,
+      "promptChars": 8628,
+      "promptTokens": 2429,
+      "timingsMs": {
+        "scope": 0.38,
+        "analyze": 0.17,
+        "embed": 53.78,
+        "faiss": 0.84,
+        "lexical": 49.33,
+        "merge": 0.31,
+        "filter_and_prompt": 0.51,
+        "total": 105.47
+      }
+    },
+    {
+      "id": "fr03",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 19,
+      "contextDocs": [
+        "--_Argumentaire_Produits_partenaire_SARL_ACE_Algérie_BUZZ",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_en_français",
+        "--_Argumentaire_Produits_partenaire_SARL_ACE_Algérie_BUZZ_VERSION_ARABE",
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR",
+        "Convention_AT_L_établissement_B",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "B_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_MOOHTARIF_FR",
+        "Argumentaire_cache_medems_version_FR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 14550,
+      "promptTokens": 4000,
+      "timingsMs": {
+        "scope": 0.33,
+        "analyze": 0.21,
+        "embed": 59.27,
+        "faiss": 1.26,
+        "lexical": 37.01,
+        "merge": 0.25,
+        "filter_and_prompt": 0.28,
+        "total": 98.71
+      }
+    },
+    {
+      "id": "fr04",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 12,
+      "contextDocs": [
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR",
+        "Argumentaire_EKOTEB_Version_2_FR",
+        "Argumentaire_Cartes_de_recharge_Dorouscom_-_FR_-",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_arabe_-",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_française_-",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "Argumentaire_Cartes_de_racharge_Dorouscom_-_Arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 11280,
+      "promptTokens": 3105,
+      "timingsMs": {
+        "scope": 0.26,
+        "analyze": 0.11,
+        "embed": 60.88,
+        "faiss": 0.73,
+        "lexical": 50.82,
+        "merge": 0.31,
+        "filter_and_prompt": 0.35,
+        "total": 113.57
+      }
+    },
+    {
+      "id": "fr05",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 16,
+      "contextDocs": [
+        "Argumentaire_Cartes_de_recharge_Dorouscom_-_FR_-",
+        "Argumentaire_Cartes_de_racharge_Dorouscom_-_Arabe",
+        "Argumentaire_Plateforme_ClassaTeck_version_FR",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish-_version_française_-"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 11210,
+      "promptTokens": 3132,
+      "timingsMs": {
+        "scope": 0.19,
+        "analyze": 0.11,
+        "embed": 45.96,
+        "faiss": 0.57,
+        "lexical": 43.05,
+        "merge": 0.36,
+        "filter_and_prompt": 0.39,
+        "total": 90.72
+      }
+    },
+    {
+      "id": "fr06",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 11,
+      "contextDocs": [
+        "Argumentaire_EKOTEB_Version_2_FR",
+        "Argumentaire_EKOTEB_V2_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 7625,
+      "promptTokens": 2129,
+      "timingsMs": {
+        "scope": 0.23,
+        "analyze": 0.12,
+        "embed": 50.27,
+        "faiss": 0.57,
+        "lexical": 37.15,
+        "merge": 0.19,
+        "filter_and_prompt": 0.18,
+        "total": 88.8
+      }
+    },
+    {
+      "id": "fr07",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Argumentaire_MOOHTARIF_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR",
+        "Argumentaire_idoom_Medium_business_et_modernisation._V_2.0_FR",
+        "--_Argumentaire_Produits_partenaire_SARL_ACE_Algérie_BUZZ"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 16135,
+      "promptTokens": 4568,
+      "timingsMs": {
+        "scope": 0.2,
+        "analyze": 0.1,
+        "embed": 42.83,
+        "faiss": 0.61,
+        "lexical": 33.09,
+        "merge": 0.3,
+        "filter_and_prompt": 0.32,
+        "total": 77.51
+      }
+    },
+    {
+      "id": "fr08",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 17,
+      "contextDocs": [
+        "Argumentaire_MOOHTARIF_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR",
+        "Argumentaire_MOOHTARIF_Version_ARAB"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 14792,
+      "promptTokens": 4152,
+      "timingsMs": {
+        "scope": 0.17,
+        "analyze": 0.1,
+        "embed": 45.26,
+        "faiss": 0.77,
+        "lexical": 37.8,
+        "merge": 0.35,
+        "filter_and_prompt": 0.33,
+        "total": 84.86
+      }
+    },
+    {
+      "id": "fr09",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 17,
+      "contextDocs": [
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish-_version_française_-",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_française_2025",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Français",
+        "Argumentaire_MOOHTARIF_FR",
+        "Mise_à_jour_offre_Locataire_idoom_fibre_ADSL_et_VDSL_V4_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 14064,
+      "promptTokens": 3936,
+      "timingsMs": {
+        "scope": 0.18,
+        "analyze": 0.11,
+        "embed": 41.22,
+        "faiss": 0.56,
+        "lexical": 42.04,
+        "merge": 0.39,
+        "filter_and_prompt": 0.46,
+        "total": 85.08
+      }
+    },
+    {
+      "id": "fr10",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 15,
+      "contextDocs": [
+        "Argumentaire_Mise_à_jour_offre_idoom_fibre_ADSL_et_VDSL_17072025_version_FR",
+        "Argumentaire_Offre_Gamers_V5_2025_FR",
+        "Argumentaire_Offre_Gamers_V5_2025_AR",
+        "Argumentaire_MOOHTARIF_FR",
+        "Mise_à_jour_offre_Locataire_idoom_fibre_ADSL_et_VDSL_V4_AR_1",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 11389,
+      "promptTokens": 3381,
+      "timingsMs": {
+        "scope": 0.25,
+        "analyze": 0.14,
+        "embed": 48.81,
+        "faiss": 0.5,
+        "lexical": 43.95,
+        "merge": 0.28,
+        "filter_and_prompt": 0.32,
+        "total": 94.35
+      }
+    },
+    {
+      "id": "fr11",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 15,
+      "contextDocs": [
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish-_version_française_-",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish_-_version_arabe_-",
+        "Brief_Marketing_Nouveaux_Avantages_Liés_au_Paiement_Électronique",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 12549,
+      "promptTokens": 3462,
+      "timingsMs": {
+        "scope": 0.26,
+        "analyze": 0.17,
+        "embed": 50.01,
+        "faiss": 0.87,
+        "lexical": 45.21,
+        "merge": 0.41,
+        "filter_and_prompt": 0.46,
+        "total": 97.49
+      }
+    },
+    {
+      "id": "fr12",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 14,
+      "contextDocs": [
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_française_-",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish-_version_française_-",
+        "Brief_Marketing_Nouveaux_Avantages_Liés_au_Paiement_Électronique",
+        "Argumentaire_TWIN_BOX_-_version_2-_version_FR",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13076,
+      "promptTokens": 3588,
+      "timingsMs": {
+        "scope": 0.27,
+        "analyze": 0.16,
+        "embed": 50.2,
+        "faiss": 0.92,
+        "lexical": 49.2,
+        "merge": 0.39,
+        "filter_and_prompt": 0.42,
+        "total": 101.67
+      }
+    },
+    {
+      "id": "fr13",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 12,
+      "contextDocs": [
+        "Argumentaire_Offre_Gamers_V5_2025_FR",
+        "Argumentaire_Offre_Gamers_V5_2025_AR",
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_français",
+        "Guide_NGBSS_Création_nouveau_Pack_IDOOM_Fibre_1",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2",
+        "Convention_AT_L_établissement_T",
+        "Convention_Algérie_Télécom_L_établissement_AC"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 10673,
+      "promptTokens": 3006,
+      "timingsMs": {
+        "scope": 0.23,
+        "analyze": 0.12,
+        "embed": 44.51,
+        "faiss": 0.61,
+        "lexical": 34.68,
+        "merge": 0.29,
+        "filter_and_prompt": 0.3,
+        "total": 80.83
+      }
+    },
+    {
+      "id": "fr14",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Argumentaire_Offre_Gamers_V5_2025_FR",
+        "Argumentaire_Offre_Gamers_V5_2025_AR",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2",
+        "Argumentaire_EKOTEB_Version_2_FR",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Français",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Arabe",
+        "Argumentaire_MOOHTARIF_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 15804,
+      "promptTokens": 4706,
+      "timingsMs": {
+        "scope": 0.32,
+        "analyze": 0.15,
+        "embed": 48.9,
+        "faiss": 0.76,
+        "lexical": 40.15,
+        "merge": 0.38,
+        "filter_and_prompt": 0.5,
+        "total": 91.25
+      }
+    },
+    {
+      "id": "fr15",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 18,
+      "contextDocs": [
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Français",
+        "Argumentaire_Offre_Gamers_V5_2025_FR",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 14332,
+      "promptTokens": 4218,
+      "timingsMs": {
+        "scope": 0.23,
+        "analyze": 0.13,
+        "embed": 45.55,
+        "faiss": 0.59,
+        "lexical": 45.89,
+        "merge": 0.38,
+        "filter_and_prompt": 0.53,
+        "total": 93.41
+      }
+    },
+    {
+      "id": "fr16",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 11,
+      "contextDocs": [
+        "Argumentaire_Plateforme_ClassaTeck_version_FR",
+        "Argumentaire_Plateforme_ClassaTeck_version_arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 8077,
+      "promptTokens": 2274,
+      "timingsMs": {
+        "scope": 0.16,
+        "analyze": 0.07,
+        "embed": 46.52,
+        "faiss": 0.61,
+        "lexical": 31.58,
+        "merge": 0.19,
+        "filter_and_prompt": 0.16,
+        "total": 79.39
+      }
+    },
+    {
+      "id": "fr17",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 8,
+      "contextDocs": [
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_en_français",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_EN_ARABE"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 8045,
+      "promptTokens": 2210,
+      "timingsMs": {
+        "scope": 0.2,
+        "analyze": 0.09,
+        "embed": 48.31,
+        "faiss": 0.5,
+        "lexical": 43.47,
+        "merge": 0.28,
+        "filter_and_prompt": 0.21,
+        "total": 93.16
+      }
+    },
+    {
+      "id": "fr18",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 2,
+      "contextChunks": 13,
+      "contextDocs": [
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_arabe",
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_français",
+        "Offre_Modernisation_Ecoles_Primaires_FR",
+        "Guide_NGBSS_Ligne_temporaire"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 12964,
+      "promptTokens": 3885,
+      "timingsMs": {
+        "scope": 0.23,
+        "analyze": 0.14,
+        "embed": 48.5,
+        "faiss": 0.59,
+        "lexical": 46.33,
+        "merge": 0.42,
+        "filter_and_prompt": 0.37,
+        "total": 96.74
+      }
+    },
+    {
+      "id": "fr19",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 9,
+      "contextDocs": [
+        "Argumentaire_Service_MOALIM_V3_WORD",
+        "Argumentaire_Service_MOALIM_V3_arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 8351,
+      "promptTokens": 2356,
+      "timingsMs": {
+        "scope": 0.24,
+        "analyze": 0.13,
+        "embed": 44.86,
+        "faiss": 0.57,
+        "lexical": 41.47,
+        "merge": 0.21,
+        "filter_and_prompt": 0.23,
+        "total": 87.81
+      }
+    },
+    {
+      "id": "fr20",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 9,
+      "contextDocs": [
+        "Argumentaire_TWIN_BOX_-_version_2-_version_FR",
+        "Argumentaire_TWIN_BOX_-_version_2-arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 7497,
+      "promptTokens": 2217,
+      "timingsMs": {
+        "scope": 0.24,
+        "analyze": 0.12,
+        "embed": 54.75,
+        "faiss": 0.75,
+        "lexical": 43.62,
+        "merge": 0.24,
+        "filter_and_prompt": 0.24,
+        "total": 100.09
+      }
+    },
+    {
+      "id": "fr21",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 14,
+      "contextDocs": [
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_FR",
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_française",
+        "Argumentaire_Mise_à_jour_offre_idoom_fibre_ADSL_et_VDSL_17072025_version_FR",
+        "Convention_Algérie_Télécom_L_établissement_AB",
+        "Convention_Algérie_Télécom_L_établissement_X",
+        "Convention_AT_L_établissement_k",
+        "Convention_Algérie_Télécom_L_établissement_AD",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_française_2025"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13377,
+      "promptTokens": 3535,
+      "timingsMs": {
+        "scope": 0.32,
+        "analyze": 0.14,
+        "embed": 51.76,
+        "faiss": 0.66,
+        "lexical": 53.95,
+        "merge": 0.54,
+        "filter_and_prompt": 0.41,
+        "total": 107.9
+      }
+    },
+    {
+      "id": "fr22",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 10,
+      "contextDocs": [
+        "Argumentaire_cache_medems_version_FR",
+        "Convention_AT_L_établissement_B",
+        "Guide_NGBSS_Création_nouveau_Pack_IDOOM_Fibre_1",
+        "Guide_d_utilisation_NGBSS_retour_ressource"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 8745,
+      "promptTokens": 2345,
+      "timingsMs": {
+        "scope": 0.28,
+        "analyze": 0.15,
+        "embed": 49.89,
+        "faiss": 0.69,
+        "lexical": 39.72,
+        "merge": 0.29,
+        "filter_and_prompt": 0.26,
+        "total": 91.4
+      }
+    },
+    {
+      "id": "fr23",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 13,
+      "contextDocs": [
+        "Argumentaire_idoom_Medium_business_et_modernisation._V_2.0_FR",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR",
+        "Argumentaire_Mise_à_jour_offre_idoom_fibre_ADSL_et_VDSL_17072025_version_FR",
+        "Argumentaire_Offre_Gamers_V5_2025_FR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 11080,
+      "promptTokens": 3034,
+      "timingsMs": {
+        "scope": 0.21,
+        "analyze": 0.1,
+        "embed": 45.51,
+        "faiss": 0.58,
+        "lexical": 42.63,
+        "merge": 0.25,
+        "filter_and_prompt": 0.26,
+        "total": 89.63
+      }
+    },
+    {
+      "id": "fr24",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 12,
+      "contextDocs": [
+        "Convention_AT_L_établissement_B",
+        "B_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Convention_Algérie_Télécom_L_établissement_Y",
+        "Convention_AT_L_établissement_V",
+        "Convention_AT_-_L_établissement_H",
+        "Convention_AT-_L_établissement_I",
+        "Convention_AT_-_L_établissement_C",
+        "Convention_AT_L_établissement_O",
+        "Convention_AT_L_établissement_Q",
+        "Convention_AT_-_L_établissement_J"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 7891,
+      "promptTokens": 2163,
+      "timingsMs": {
+        "scope": 0.25,
+        "analyze": 0.14,
+        "embed": 44.4,
+        "faiss": 0.6,
+        "lexical": 34.33,
+        "merge": 0.24,
+        "filter_and_prompt": 0.16,
+        "total": 80.24
+      }
+    },
+    {
+      "id": "fr25",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 11,
+      "contextDocs": [
+        "Guide_NGBSS_Création_nouveau_Pack_IDOOM_Fibre_1",
+        "Guide_NGBSS_Création_enquête_PSTN_et_la_Gestion_d_ordre",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "Argumentaire_MOOHTARIF_FR",
+        "Argumentaire_Mise_à_jour_offre_idoom_fibre_ADSL_et_VDSL_17072025_version_FR",
+        "Argumentaire_MOOHTARIF_Version_ARAB"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 9177,
+      "promptTokens": 2694,
+      "timingsMs": {
+        "scope": 0.16,
+        "analyze": 0.08,
+        "embed": 47.95,
+        "faiss": 0.63,
+        "lexical": 36.15,
+        "merge": 0.21,
+        "filter_and_prompt": 0.23,
+        "total": 85.51
+      }
+    },
+    {
+      "id": "fr26",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 12,
+      "contextDocs": [
+        "Guide_NGBSS_Edition_facture_duplicata",
+        "Saisie_facture_détaillée",
+        "Guide_NGBSS_Facture_complémentaire_TVA_2",
+        "Facture_complémentaire_TVA_2",
+        "Payement_arrangement_-Echéancier-_2",
+        "Guide_d_utilisation_NGBSS_retour_ressource"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 9129,
+      "promptTokens": 2402,
+      "timingsMs": {
+        "scope": 0.18,
+        "analyze": 0.07,
+        "embed": 46.18,
+        "faiss": 0.5,
+        "lexical": 32.92,
+        "merge": 0.25,
+        "filter_and_prompt": 0.17,
+        "total": 80.36
+      }
+    },
+    {
+      "id": "fr27",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 14,
+      "contextDocs": [
+        "Guide_NGBSS_Ligne_temporaire",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish_-_version_arabe_-",
+        "Convention_AT_L_établissement_A",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR",
+        "Mode_opératoire_de_commercialisation_des_Kits_de_branchements_FTTH_interne_Version_FR_--FIN--",
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 15666,
+      "promptTokens": 4214,
+      "timingsMs": {
+        "scope": 0.17,
+        "analyze": 0.11,
+        "embed": 46.12,
+        "faiss": 0.7,
+        "lexical": 34.71,
+        "merge": 0.25,
+        "filter_and_prompt": 0.37,
+        "total": 82.51
+      }
+    },
+    {
+      "id": "fr28",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 10,
+      "contextDocs": [
+        "Payement_arrangement_-Echéancier-_2"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 11624,
+      "promptTokens": 3094,
+      "timingsMs": {
+        "scope": 0.3,
+        "analyze": 0.1,
+        "embed": 47.58,
+        "faiss": 0.7,
+        "lexical": 37.34,
+        "merge": 0.18,
+        "filter_and_prompt": 0.22,
+        "total": 86.49
+      }
+    },
+    {
+      "id": "fr29",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 16,
+      "contextDocs": [
+        "Payement_arrangement_-Echéancier-_2",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_française_-",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "Argumentaire_EKOTEB_Version_2_FR",
+        "Brief_Marketing_Nouveaux_Avantages_Liés_au_Paiement_Électronique",
+        "Argumentaire_Mise_à_jour_offre_idoom_fibre_ADSL_et_VDSL_17072025_version_FR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_FR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 14387,
+      "promptTokens": 4079,
+      "timingsMs": {
+        "scope": 0.2,
+        "analyze": 0.1,
+        "embed": 45.37,
+        "faiss": 0.62,
+        "lexical": 34.98,
+        "merge": 0.24,
+        "filter_and_prompt": 0.32,
+        "total": 81.92
+      }
+    },
+    {
+      "id": "fr30",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 5,
+      "contextDocs": [
+        "Guide_NGBSS_Réactivation_Abonné_4G_LTE_1",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_française_2025",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_Arabe_2025"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 5921,
+      "promptTokens": 1703,
+      "timingsMs": {
+        "scope": 0.21,
+        "analyze": 0.08,
+        "embed": 43.87,
+        "faiss": 0.61,
+        "lexical": 37.98,
+        "merge": 0.29,
+        "filter_and_prompt": 0.25,
+        "total": 83.44
+      }
+    },
+    {
+      "id": "fr31",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 17,
+      "contextDocs": [
+        "Offre_Modernisation_Ecoles_Primaires_FR",
+        "Offre_Modernisation_Ecoles_Primaires_AR",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "Guide_NGBSS_Création_nouveau_Pack_IDOOM_Fibre_1",
+        "Guide_NGBSS_Ligne_temporaire",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_française_-"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13628,
+      "promptTokens": 3835,
+      "timingsMs": {
+        "scope": 0.19,
+        "analyze": 0.1,
+        "embed": 45.59,
+        "faiss": 0.63,
+        "lexical": 36.61,
+        "merge": 0.35,
+        "filter_and_prompt": 0.29,
+        "total": 83.85
+      }
+    },
+    {
+      "id": "fr32",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 3,
+      "contextChunks": 7,
+      "contextDocs": [
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_Arabe_2025",
+        "Guide_NGBSS_Réactivation_Abonné_4G_LTE_1",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_française_2025"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 6503,
+      "promptTokens": 1805,
+      "timingsMs": {
+        "scope": 0.27,
+        "analyze": 0.16,
+        "embed": 46.78,
+        "faiss": 0.62,
+        "lexical": 38.32,
+        "merge": 0.25,
+        "filter_and_prompt": 0.23,
+        "total": 86.73
+      }
+    },
+    {
+      "id": "fr33",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Mode_opératoire_de_commercialisation_des_Kits_de_branchements_FTTH_interne_Version_FR_--FIN--",
+        "Mode_opératoire_de_commercialisation_des_Kits_de_branchements_FTTH_interne_Version_AR_--FIN--",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_en_français",
+        "Argumentaire_Offre_Gamers_V5_2025_FR",
+        "Argumentaire_TWIN_BOX_-_version_2-_version_FR",
+        "Argumentaire_MOOHTARIF_FR",
+        "Guide_NGBSS_Création_nouveau_Pack_IDOOM_Fibre_1",
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Français",
+        "Convention_Algérie_Télécom_L_établissement_Y"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 26065,
+      "promptTokens": 7216,
+      "timingsMs": {
+        "scope": 0.25,
+        "analyze": 0.11,
+        "embed": 44.58,
+        "faiss": 0.62,
+        "lexical": 39.07,
+        "merge": 0.38,
+        "filter_and_prompt": 0.78,
+        "total": 85.91
+      }
+    },
+    {
+      "id": "fr34",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 10,
+      "contextDocs": [
+        "Guide_d_utilisation_NGBSS_retour_ressource",
+        "Guide_NGBSS_Inventaire",
+        "Guide_NGBSS_Recharge_par_bon_de_commande_-_complément",
+        "Guide_NGBSS_Vente_par_Lot_V2"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13602,
+      "promptTokens": 3335,
+      "timingsMs": {
+        "scope": 0.18,
+        "analyze": 0.07,
+        "embed": 42.91,
+        "faiss": 0.65,
+        "lexical": 39.57,
+        "merge": 0.21,
+        "filter_and_prompt": 0.29,
+        "total": 83.98
+      }
+    },
+    {
+      "id": "fr35",
+      "lang": "fr",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 13,
+      "contextDocs": [
+        "Guide_NGBSS_Inventaire",
+        "Guide_d_utilisation_NGBSS_retour_ressource",
+        "Guide_NGBSS_Recharge_par_bon_de_commande_-_complément",
+        "Guide_NGBSS_Vente_par_Lot_V2",
+        "Saisie_facture_détaillée",
+        "Payement_arrangement_-Echéancier-_2"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 15175,
+      "promptTokens": 3823,
+      "timingsMs": {
+        "scope": 0.21,
+        "analyze": 0.08,
+        "embed": 43.41,
+        "faiss": 0.65,
+        "lexical": 34.31,
+        "merge": 0.16,
+        "filter_and_prompt": 0.27,
+        "total": 79.18
+      }
+    },
+    {
+      "id": "ar01",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 9,
+      "contextDocs": [
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_AR_version_2",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 9189,
+      "promptTokens": 2646,
+      "timingsMs": {
+        "scope": 0.24,
+        "analyze": 0.13,
+        "embed": 44.25,
+        "faiss": 0.59,
+        "lexical": 32.06,
+        "merge": 0.17,
+        "filter_and_prompt": 0.28,
+        "total": 77.81
+      }
+    },
+    {
+      "id": "ar02",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 11,
+      "contextDocs": [
+        "Argumentaire_Cartes_de_racharge_Dorouscom_-_Arabe",
+        "Argumentaire_Cartes_de_recharge_Dorouscom_-_FR_-",
+        "Argumentaire_Plateforme_ClassaTeck_version_arabe",
+        "Argumentaire_TWIN_BOX_-_version_2-arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 8153,
+      "promptTokens": 2381,
+      "timingsMs": {
+        "scope": 0.18,
+        "analyze": 0.09,
+        "embed": 48.89,
+        "faiss": 0.62,
+        "lexical": 34.48,
+        "merge": 0.22,
+        "filter_and_prompt": 0.19,
+        "total": 84.75
+      }
+    },
+    {
+      "id": "ar03",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 2,
+      "contextChunks": 14,
+      "contextDocs": [
+        "Argumentaire_EKOTEB_Version_2_FR",
+        "Argumentaire_EKOTEB_V2_AR",
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_arabe",
+        "Argumentaire_TWIN_BOX_-_version_2-arabe",
+        "AB_اتفاقية_اتصالات_الجزائر_والمؤسسة",
+        "H_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_Service_MOALIM_V3_arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 9741,
+      "promptTokens": 2806,
+      "timingsMs": {
+        "scope": 0.15,
+        "analyze": 0.1,
+        "embed": 53.13,
+        "faiss": 0.63,
+        "lexical": 35.46,
+        "merge": 0.22,
+        "filter_and_prompt": 0.19,
+        "total": 89.95
+      }
+    },
+    {
+      "id": "ar04",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 17,
+      "contextDocs": [
+        "Argumentaire_Offre_Gamers_V5_2025_AR",
+        "Argumentaire_Offre_Gamers_V5_2025_FR",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Arabe",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Français"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 12119,
+      "promptTokens": 3661,
+      "timingsMs": {
+        "scope": 0.27,
+        "analyze": 0.15,
+        "embed": 47.36,
+        "faiss": 0.6,
+        "lexical": 37.83,
+        "merge": 0.26,
+        "filter_and_prompt": 0.24,
+        "total": 86.82
+      }
+    },
+    {
+      "id": "ar05",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 15,
+      "contextDocs": [
+        "Argumentaire_Service_MOALIM_V3_arabe",
+        "Argumentaire_Plateforme_ClassaTeck_version_arabe",
+        "Argumentaire_Service_MOALIM_V3_WORD",
+        "Argumentaire_Cartes_de_recharge_Dorouscom_-_FR_-",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_EN_ARABE",
+        "F_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Offre_Modernisation_Ecoles_Primaires_AR",
+        "Argumentaire_Cartes_de_racharge_Dorouscom_-_Arabe",
+        "--_Argumentaire_Produits_partenaire_SARL_ACE_Algérie_BUZZ_VERSION_ARABE",
+        "I_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 10236,
+      "promptTokens": 3031,
+      "timingsMs": {
+        "scope": 0.22,
+        "analyze": 0.13,
+        "embed": 45.92,
+        "faiss": 1.08,
+        "lexical": 30.05,
+        "merge": 0.3,
+        "filter_and_prompt": 0.27,
+        "total": 78.08
+      }
+    },
+    {
+      "id": "ar06",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Argumentaire_TWIN_BOX_-_version_2-arabe",
+        "Argumentaire_TWIN_BOX_-_version_2-_version_FR",
+        "Argumentaire_EKOTEB_V2_AR",
+        "Argumentaire_Plateforme_ClassaTeck_version_arabe",
+        "Mode_opératoire_de_commercialisation_des_Kits_de_branchements_FTTH_interne_Version_AR_--FIN--",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_AR_version_2",
+        "AD_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_Cartes_de_racharge_Dorouscom_-_Arabe",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish_-_version_arabe_-"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 15147,
+      "promptTokens": 4475,
+      "timingsMs": {
+        "scope": 0.22,
+        "analyze": 0.12,
+        "embed": 45.4,
+        "faiss": 0.51,
+        "lexical": 33.59,
+        "merge": 0.37,
+        "filter_and_prompt": 0.35,
+        "total": 80.68
+      }
+    },
+    {
+      "id": "ar07",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 6,
+      "contextDocs": [
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_Arabe_2025",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_française_2025"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 5850,
+      "promptTokens": 1616,
+      "timingsMs": {
+        "scope": 0.2,
+        "analyze": 0.11,
+        "embed": 45.54,
+        "faiss": 0.48,
+        "lexical": 31.68,
+        "merge": 0.3,
+        "filter_and_prompt": 0.24,
+        "total": 78.65
+      }
+    },
+    {
+      "id": "ar08",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 11,
+      "contextDocs": [
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_arabe",
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_français",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 12200,
+      "promptTokens": 3568,
+      "timingsMs": {
+        "scope": 0.26,
+        "analyze": 0.13,
+        "embed": 45.41,
+        "faiss": 0.71,
+        "lexical": 37.22,
+        "merge": 0.26,
+        "filter_and_prompt": 0.27,
+        "total": 84.36
+      }
+    },
+    {
+      "id": "ar09",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 16,
+      "contextDocs": [
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_arabe_-",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish_-_version_arabe_-",
+        "C_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Mise_à_jour_offre_Locataire_idoom_fibre_ADSL_et_VDSL_V4_AR_1",
+        "Mise_à_jour_offre_Locataire_idoom_fibre_ADSL_et_VDSL_V4_AR",
+        "I_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "B_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 11441,
+      "promptTokens": 3421,
+      "timingsMs": {
+        "scope": 0.27,
+        "analyze": 0.1,
+        "embed": 42.2,
+        "faiss": 0.54,
+        "lexical": 36.89,
+        "merge": 0.35,
+        "filter_and_prompt": 0.22,
+        "total": 80.68
+      }
+    },
+    {
+      "id": "ar10",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 13,
+      "contextDocs": [
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR",
+        "Argumentaire_idoom_Medium_business_et_modernisation._V_2.0_FR",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_EN_ARABE",
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_arabe",
+        "Argumentaire_Caches_Modems_Dépôt_vente_version_arabe"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 10197,
+      "promptTokens": 2950,
+      "timingsMs": {
+        "scope": 0.19,
+        "analyze": 0.1,
+        "embed": 43.11,
+        "faiss": 0.71,
+        "lexical": 31.16,
+        "merge": 0.27,
+        "filter_and_prompt": 0.26,
+        "total": 75.88
+      }
+    },
+    {
+      "id": "ar11",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_arabe",
+        "G_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "F_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "C_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "AC_اتفاقية_بين_اتصالات_الجزائر_والمؤسسة",
+        "AB_اتفاقية_اتصالات_الجزائر_والمؤسسة",
+        "E_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "D_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_française",
+        "AD_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13186,
+      "promptTokens": 3737,
+      "timingsMs": {
+        "scope": 0.22,
+        "analyze": 0.13,
+        "embed": 46.3,
+        "faiss": 0.77,
+        "lexical": 34.27,
+        "merge": 0.18,
+        "filter_and_prompt": 0.28,
+        "total": 82.24
+      }
+    },
+    {
+      "id": "ar12",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Offre_Modernisation_Ecoles_Primaires_AR",
+        "A_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "X_اتفاقية_اتصالات_الجزائر_و_المؤسسة",
+        "AB_اتفاقية_اتصالات_الجزائر_والمؤسسة",
+        "D_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "H_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Mise_à_jour_offre_Locataire_idoom_fibre_ADSL_et_VDSL_V4_AR",
+        "Argumentaire_EKOTEB_V2_AR",
+        "Mise_à_jour_offre_Locataire_idoom_fibre_ADSL_et_VDSL_V4_AR_1"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 13372,
+      "promptTokens": 3810,
+      "timingsMs": {
+        "scope": 0.21,
+        "analyze": 0.12,
+        "embed": 43.61,
+        "faiss": 0.62,
+        "lexical": 32.24,
+        "merge": 0.29,
+        "filter_and_prompt": 0.28,
+        "total": 77.46
+      }
+    },
+    {
+      "id": "ar13",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 20,
+      "contextDocs": [
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish_-_version_arabe_-",
+        "Argumentaire_Nouveaux_Avantages_Liés_au_Paiement_Électronique_-finish-_version_française_-",
+        "Brief_Marketing_Nouveaux_Avantages_Liés_au_Paiement_Électronique",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_AR_version_2",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Arabe",
+        "AC_اتفاقية_بين_اتصالات_الجزائر_والمؤسسة"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 15532,
+      "promptTokens": 4552,
+      "timingsMs": {
+        "scope": 0.19,
+        "analyze": 0.11,
+        "embed": 42.05,
+        "faiss": 0.57,
+        "lexical": 36.88,
+        "merge": 0.46,
+        "filter_and_prompt": 0.52,
+        "total": 80.88
+      }
+    },
+    {
+      "id": "ar14",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 13,
+      "contextDocs": [
+        "Argumentaire_Caches_Modems_Dépôt_vente_version_arabe",
+        "AB_اتفاقية_اتصالات_الجزائر_والمؤسسة",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "AD_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 9524,
+      "promptTokens": 2857,
+      "timingsMs": {
+        "scope": 0.17,
+        "analyze": 0.08,
+        "embed": 42.43,
+        "faiss": 0.66,
+        "lexical": 26.73,
+        "merge": 0.3,
+        "filter_and_prompt": 0.24,
+        "total": 70.7
+      }
+    },
+    {
+      "id": "ar15",
+      "lang": "ar",
+      "inScope": true,
+      "rank": 1,
+      "contextChunks": 19,
+      "contextDocs": [
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Argumentaire_MOOHTARIF_Locataire_Version_AR",
+        "Argumentaire_MOOHTARIF_FR",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR"
+      ],
+      "keywordRecall": 1.0,
+      "promptChars": 12904,
+      "promptTokens": 3936,
+      "timingsMs": {
+        "scope": 0.25,
+        "analyze": 0.09,
+        "embed": 39.29,
+        "faiss": 0.57,
+        "lexical": 31.58,
+        "merge": 0.51,
+        "filter_and_prompt": 0.42,
+        "total": 72.84
+      }
+    },
+    {
+      "id": "neg01",
+      "lang": "fr",
+      "inScope": false,
+      "rank": null,
+      "contextChunks": 7,
+      "contextDocs": [
+        "Argumentaire_Offre_Gamers_V5_2025_AR",
+        "Guide_NGBSS_Création_enquête_PSTN_et_la_Gestion_d_ordre",
+        "Argumentaire_TWIN_BOX_-_version_2-arabe",
+        "Argumentaire_Cartes_de_recharge_Dorouscom_-_FR_-",
+        "U_الاتفاقية_الجديدة_المبرمة_بين_اتصالات_الجزائر_والمؤسسة",
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR",
+        "Argumentaire_idoom_Medium_business_et_moderni_v_2.0_AR"
+      ],
+      "keywordRecall": null,
+      "promptChars": 6142,
+      "promptTokens": 1777,
+      "timingsMs": {
+        "scope": 0.15,
+        "analyze": 0.07,
+        "embed": 42.5,
+        "faiss": 0.58,
+        "lexical": 23.98,
+        "merge": 0.16,
+        "filter_and_prompt": 0.12,
+        "total": 67.66
+      }
+    },
+    {
+      "id": "neg02",
+      "lang": "fr",
+      "inScope": false,
+      "rank": null,
+      "contextChunks": 18,
+      "contextDocs": [
+        "Guide_NGBSS_Création_enquête_PSTN_et_la_Gestion_d_ordre",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_FR",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_française_-",
+        "Guide_NGBSS_Réactivation_Abonné_4G_LTE_1",
+        "Argumentaire_Nouvelle_Offre_Parrainage_2025_-_version_arabe_-",
+        "Guide_d_utilisation_NGBSS_retour_ressource",
+        "Guide_NGBSS_Création_nouveau_Pack_IDOOM_Fibre_1",
+        "Argumentaire_Boutique_en_ligne_Idoom_Market_version_FR",
+        "Payement_arrangement_-Echéancier-_2"
+      ],
+      "keywordRecall": null,
+      "promptChars": 15981,
+      "promptTokens": 4478,
+      "timingsMs": {
+        "scope": 0.15,
+        "analyze": 0.08,
+        "embed": 38.27,
+        "faiss": 0.49,
+        "lexical": 42.1,
+        "merge": 0.29,
+        "filter_and_prompt": 0.32,
+        "total": 81.77
+      }
+    },
+    {
+      "id": "neg03",
+      "lang": "fr",
+      "inScope": false,
+      "rank": null,
+      "contextChunks": 18,
+      "contextDocs": [
+        "Argumentaire_TWIN_BOX_-_version_2-_version_FR",
+        "nouvelle_offre_IDOOM_4G_LTE_Sans_Engagement_version_française_2025",
+        "Argumentaire_Révision_du_prix_des_ONT_GPON_Wi-Fi_6_Lancement_des_ONT_en_français",
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Arabe",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_en_français",
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_FR",
+        "Argumentaire_Timbre_fiscal_conformément_à_la_nouvelle_loi_de_finance_2025_version_française",
+        "--_Argumentaire_Offre_Weekend_Boost_V2--_finish_JUILLET_FR_Version_2",
+        "Argumentaire_Service_MOALIM_V3_WORD"
+      ],
+      "keywordRecall": null,
+      "promptChars": 17733,
+      "promptTokens": 5135,
+      "timingsMs": {
+        "scope": 0.25,
+        "analyze": 0.1,
+        "embed": 44.77,
+        "faiss": 0.57,
+        "lexical": 35.84,
+        "merge": 0.33,
+        "filter_and_prompt": 0.37,
+        "total": 82.33
+      }
+    },
+    {
+      "id": "neg04",
+      "lang": "ar",
+      "inScope": false,
+      "rank": null,
+      "contextChunks": 19,
+      "contextDocs": [
+        "Argumentaire_Offre_Gamers_Locataire_V5_2025_en_Arabe",
+        "D_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "Argumentaire_Produits_partenaire_SARL_SACOMI_ELECTRONICS_-Smartphone_ZTE-_EN_ARABE",
+        "Argumentaire_Caches_Modems_Dépôt_vente_version_arabe",
+        "Argumentaire_MOOHTARIF_Version_ARAB",
+        "Mode_opératoire_de_commercialisation_des_Kits_de_branchements_FTTH_interne_Version_AR_--FIN--",
+        "Argumentaire_TWIN_BOX_-_version_2-arabe",
+        "AD_اتفاقية_بين_اتصالات_الجزائر_و_المؤسسة",
+        "AC_اتفاقية_بين_اتصالات_الجزائر_والمؤسسة",
+        "AB_اتفاقية_اتصالات_الجزائر_والمؤسسة"
+      ],
+      "keywordRecall": null,
+      "promptChars": 14889,
+      "promptTokens": 4421,
+      "timingsMs": {
+        "scope": 0.24,
+        "analyze": 0.1,
+        "embed": 43.3,
+        "faiss": 0.65,
+        "lexical": 34.92,
+        "merge": 0.27,
+        "filter_and_prompt": 0.46,
+        "total": 80.03
+      }
+    },
+    {
+      "id": "neg05",
+      "lang": "fr",
+      "inScope": false,
+      "rank": null,
+      "contextChunks": 7,
+      "contextDocs": [
+        "Argumentaire_cache_medems_version_FR",
+        "Guide_NGBSS_Inventaire",
+        "Guide_NGBSS_Vente_par_Lot_V2",
+        "Guide_NGBSS_Création_enquête_PSTN_et_la_Gestion_d_ordre",
+        "Convention_AT_L_établissement_B",
+        "Convention_AT_-_L_établissement_C"
+      ],
+      "keywordRecall": null,
+      "promptChars": 7960,
+      "promptTokens": 2228,
+      "timingsMs": {
+        "scope": 0.16,
+        "analyze": 0.09,
+        "embed": 43.54,
+        "faiss": 0.62,
+        "lexical": 26.69,
+        "merge": 0.15,
+        "filter_and_prompt": 0.18,
+        "total": 71.53
+      }
+    }
+  ]
+}
