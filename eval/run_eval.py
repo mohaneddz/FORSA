@@ -9,6 +9,7 @@ no LLM or other network calls, so it needs no API key.
 Usage:
     python eval/run_eval.py --label baseline
     python eval/run_eval.py --label tuned --batch
+    python eval/run_eval.py --label noRerank --set USE_RERANKER=False
 
 Writes eval/results/<label>.json and prints a summary.
 """
@@ -68,13 +69,22 @@ def main():
     parser.add_argument("--label", required=True, help="name of this run, used for the results file")
     parser.add_argument("--questions", default="eval/questions.json")
     parser.add_argument("--batch", action="store_true", help="also time the whole set through the batched retrieval path")
+    parser.add_argument("--set", action="append", default=[], metavar="KEY=VALUE", help="override a config.py setting for this run")
     args = parser.parse_args()
 
     import torch
+    from config import config
+
+    overrides = {}
+    for item in args.set:
+        key, raw = item.split("=", 1)
+        if not hasattr(config, key):
+            parser.error(f"unknown config key: {key}")
+        overrides[key] = json.loads(raw.lower()) if raw.lower() in ("true", "false") else json.loads(raw)
+        setattr(config, key, overrides[key])
 
     load_start = time.perf_counter()
     from api.chat import build_prompt
-    from config import config
     from services.rag_service import rag_service
     model_load_s = time.perf_counter() - load_start
 
@@ -103,8 +113,9 @@ def main():
             "lang": q["lang"],
             "inScope": bool(expected),
             "rank": rank,
-            "contextChunks": len(chunks),
+            "contextChunkCount": len(chunks),
             "contextDocs": context_docs[:10],
+            "contextChunks": [[doc_slug(c.chunk.metadata or {}), round(c.score, 4)] for c in chunks],
             "keywordRecall": (sum(k.lower() in context_text for k in keywords) / len(keywords)) if keywords else None,
             "promptChars": len(messages[0]["content"]) + len(user_prompt),
             "promptTokens": len(tokenizer(messages[0]["content"] + user_prompt)["input_ids"]),
@@ -133,6 +144,7 @@ def main():
 
     summary = {
         "label": args.label,
+        "overrides": overrides,
         "config": {
             "useReranker": config.USE_RERANKER,
             "similarityThreshold": config.SIMILARITY_THRESHOLD,
@@ -145,8 +157,9 @@ def main():
         "modelLoadSeconds": round(model_load_s, 2),
         "gpuPeakMemoryMb": round(torch.cuda.max_memory_allocated() / 2**20) if torch.cuda.is_available() else None,
         "retrieval": retrieval,
-        "refusedOutOfScope": rate(negatives, lambda r: r["contextChunks"] == 0),
-        "contextChunksMean": round(statistics.mean(r["contextChunks"] for r in positives), 1),
+        "refusedOutOfScope": rate(negatives, lambda r: r["contextChunkCount"] == 0),
+        "refusedInScope": rate(positives, lambda r: r["contextChunkCount"] == 0),
+        "contextChunksMean": round(statistics.mean(r["contextChunkCount"] for r in positives), 1),
         "promptTokensMean": round(statistics.mean(r["promptTokens"] for r in rows)),
         "latencyMs": latency,
     }

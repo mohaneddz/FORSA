@@ -55,6 +55,11 @@
     {"id": "neg02", "lang": "fr", "question": "Comment réinitialiser le mot de passe d'un compte Netflix ?", "expectedDocs": [], "answerKeywords": []},
     {"id": "neg03", "lang": "fr", "question": "Combien coûte un abonnement Starlink en Algérie ?", "expectedDocs": [], "answerKeywords": []},
     {"id": "neg04", "lang": "ar", "question": "ما هو سعر تذكرة الطائرة من الجزائر إلى باريس؟", "expectedDocs": [], "answerKeywords": []},
-    {"id": "neg05", "lang": "fr", "question": "Quelle est la recette du couscous traditionnel ?", "expectedDocs": [], "answerKeywords": []}
+    {"id": "neg05", "lang": "fr", "question": "Quelle est la recette du couscous traditionnel ?", "expectedDocs": [], "answerKeywords": []},
+    {"id": "neg06", "lang": "fr", "question": "Quel est le prix du forfait mobile Djezzy Hayla ?", "expectedDocs": [], "answerKeywords": []},
+    {"id": "neg07", "lang": "fr", "question": "Comment recharger une puce Mobilis avec une carte de crédit ?", "expectedDocs": [], "answerKeywords": []},
+    {"id": "neg08", "lang": "fr", "question": "Quels sont les horaires d'ouverture des bureaux d'Algérie Poste le vendredi ?", "expectedDocs": [], "answerKeywords": []},
+    {"id": "neg09", "lang": "ar", "question": "كم سعر هاتف iPhone 15 في الجزائر؟", "expectedDocs": [], "answerKeywords": []},
+    {"id": "neg10", "lang": "fr", "question": "Quel débit offre la 5G de Mobilis à Oran ?", "expectedDocs": [], "answerKeywords": []}
   ]
 }
