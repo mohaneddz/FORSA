@@ -51,6 +51,7 @@ class Config:
 
     # LLM Service Settings
     ENABLE_LLM_WARMUP = False  # Enable LLM service warmup on application startup
+    LLM_MAX_CONNECTIONS = 20  # pooled HTTP connections to the LLM API
 
     # Reranker settings
     USE_RERANKER = True  # Set to False to disable reranking

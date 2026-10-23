@@ -39,6 +39,11 @@ async def startup_event():
     
     logger.info("✓ Application startup complete")
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    from services.llm_service import llm_service
+    await llm_service.close()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app")
