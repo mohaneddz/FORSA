@@ -17,6 +17,7 @@ class VectorStore:
         self.index_path = config.FAISS_INDEX_PATH
         self.similarity_metric = config.SIMILARITY_METRIC
         self.index_type = config.INDEX_TYPE
+        self._lowered = None  # cached (content, file, source) in lowercase for keyword_search
         self._initialize_index()
 
     def _initialize_index(self):
@@ -68,6 +69,7 @@ class VectorStore:
 
         self.index.add(embeddings)
         self.chunks.extend(chunks)
+        self._lowered = None
         logger.info(f"Added {len(chunks)} documents to index. Total documents: {len(self.chunks)}")
         self.save_index()
 
@@ -79,30 +81,37 @@ class VectorStore:
         Note: For cosine similarity, query_vector should already be L2-normalized
         by the embedding service.
         """
+        return self.search_batch(query_vector, k)[0]
+
+    def search_batch(self, query_vectors: np.ndarray, k: int = 5) -> List[List[Tuple[DocumentChunk, float]]]:
+        """
+        Search for top k similar documents for each row of query_vectors.
+        Returns one list of (DocumentChunk, score) per query.
+        """
         if self.index is None or self.index.ntotal == 0:
             logger.warning("Index is empty or not initialized")
-            return []
+            return [[] for _ in range(len(query_vectors))]
 
         # Validate query vector dimension
-        if query_vector.shape[-1] != self.dimension:
+        if query_vectors.shape[-1] != self.dimension:
             raise ValueError(
                 f"Query vector dimension mismatch! "
-                f"Expected {self.dimension}, got {query_vector.shape[-1]}"
+                f"Expected {self.dimension}, got {query_vectors.shape[-1]}"
             )
 
         # Set nprobe for IVF index
         if self.index_type == 'IVF' and hasattr(self.index, 'nprobe'):
             self.index.nprobe = config.IVF_NPROBE
 
-        # query_vector should be (1, dim)
-        distances, indices = self.index.search(query_vector, k)
-        
+        distances, indices = self.index.search(query_vectors, k)
+
         results = []
-        for i, idx in enumerate(indices[0]):
-            if idx != -1 and idx < len(self.chunks):
-                results.append((self.chunks[idx], float(distances[0][i])))
-        
-        logger.debug(f"Search returned {len(results)} results")
+        for row_distances, row_indices in zip(distances, indices):
+            results.append([
+                (self.chunks[idx], float(dist))
+                for idx, dist in zip(row_indices, row_distances)
+                if idx != -1 and idx < len(self.chunks)
+            ])
         return results
     
     def keyword_search(self, keywords: List[str], k: int = 10) -> List[Tuple[DocumentChunk, float]]:
@@ -123,15 +132,24 @@ class VectorStore:
         
         logger.info(f"Performing keyword search with {len(keywords)} keywords: {keywords}")
         
+        if self._lowered is None or len(self._lowered) != len(self.chunks):
+            self._lowered = [
+                (
+                    chunk.content.lower(),
+                    (chunk.metadata or {}).get('file', '').lower(),
+                    (chunk.metadata or {}).get('source', '').lower(),
+                )
+                for chunk in self.chunks
+            ]
+
+        keywords_lower = [keyword.lower() for keyword in keywords]
         scored_chunks = []
-        
-        for chunk in self.chunks:
+
+        for chunk, (content_lower, file_name, source_path) in zip(self.chunks, self._lowered):
             score = 0.0
-            content_lower = chunk.content.lower()
             
             # Search in content
-            for keyword in keywords:
-                keyword_lower = keyword.lower()
+            for keyword_lower in keywords_lower:
                 # Count occurrences (with diminishing returns)
                 occurrences = content_lower.count(keyword_lower)
                 if occurrences > 0:
@@ -139,12 +157,7 @@ class VectorStore:
                     score += min(1.0, 1.0 / (1 + occurrences * 0.5))
             
             # Boost score if keywords appear in metadata
-            metadata = chunk.metadata or {}
-            file_name = metadata.get('file', '').lower()
-            source_path = metadata.get('source', '').lower()
-            
-            for keyword in keywords:
-                keyword_lower = keyword.lower()
+            for keyword_lower in keywords_lower:
                 if keyword_lower in file_name:
                     score += 0.3  # Boost for file name match
                 if keyword_lower in source_path:
@@ -185,6 +198,7 @@ class VectorStore:
             if os.path.exists(self.index_path + ".meta"):
                 with open(self.index_path + ".meta", "rb") as f:
                     self.chunks = pickle.load(f)
+            self._lowered = None
             logger.info(f"Loaded index from {self.index_path} with {len(self.chunks)} documents")
         else:
             self.index = self._create_new_index()
@@ -194,6 +208,7 @@ class VectorStore:
     def clear_index(self):
         self.index = self._create_new_index()
         self.chunks = []
+        self._lowered = None
         if os.path.exists(self.index_path):
             os.remove(self.index_path)
         if os.path.exists(self.index_path + ".meta"):
