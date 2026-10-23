@@ -264,7 +264,8 @@ def filter_chunks_by_scope(chunks: List[Any], scope: Dict[str, Optional[str]]) -
         # 2. Filter by offer name
         if scope.get('offer_name') and keep:
             offer = scope['offer_name'].lower()
-            if offer not in source_file and offer not in source_path:
+            # Chunk text counts too: "Argumentaire Offre Gamers V5 2025 FR.docx" is an Idoom Fibre offer
+            if offer not in source_file and offer not in source_path and offer not in content:
                 keep = False
                 filter_reason = f"offer_mismatch({scope['offer_name']})"
         
