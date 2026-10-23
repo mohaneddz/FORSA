@@ -29,7 +29,7 @@ def clean_source_name(source_path: str) -> str:
 
 
 def detect_language(text: str) -> str:
-    has_ar = bool(re.search(r"[؀-ۿ]", text))
+    has_ar = bool(re.search(r"[\u0600-\u06FF]", text))
     has_fr = bool(re.search(r"[A-Za-zÀ-ÿ]", text))
     if has_ar and has_fr:
         return "mixed"
