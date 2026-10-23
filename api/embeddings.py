@@ -2,10 +2,8 @@ from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from pathlib import Path
+import asyncio
 import logging
-import json
-import hashlib
-import re
 
 from services.embedding_service import embedding_service
 from services.vector_store import vector_store
@@ -17,18 +15,6 @@ from utils.logging_utils import log_execution_time
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-
-def normalize_text_for_hash(text: str) -> str:
-    """Normalize text for consistent hashing: strip whitespace, fix hyphenation, lowercase."""
-    if not text:
-        return ""
-    # Remove extra whitespace
-    text = re.sub(r'\s+', ' ', text.strip())
-    # Fix hyphenation at line breaks (common in PDFs)
-    text = re.sub(r'-(\s+)', '', text)
-    # Lowercase for case-insensitive dedup
-    text = text.lower()
-    return text
 
 # Ensure folders exist
 DB_FOLDER = Path("db")
@@ -95,92 +81,17 @@ async def generate_embeddings(file: UploadFile = File(None)):
 
 async def _generate_from_markdown_chunks(md_files: List[Path]):
     """
-    Generate embeddings from chunk-per-file Markdown.
-    Each .md file in gen/ is considered ONE chunk.
-    Expected header:
-      # SOURCE_FILE: Offers/Argumentaires des offres AR FR/Argumentaire offre Idoom Medium Business acquisition et modernisation V.2original_name.pdf
+    Replace the index with embeddings of the chunk-per-file Markdown in gen/.
+    Each .md file in gen/ is one chunk (see services/index_builder.py).
     """
-    import re
-    import hashlib
+    from services.index_builder import rebuild_index
 
-    logger.info("Processing chunk-per-file Markdown chunks...")
-    all_chunks = []
-
-    for md_file in md_files:
-        # Skip README.md
-        if md_file.name == "README.md":
-            continue
-            
-        try:
-            content = md_file.read_text(encoding="utf-8").strip()
-        except Exception as e:
-            logger.warning(f"Failed to read {md_file}: {e}")
-            continue
-
-        if len(content) < 80:
-            continue
-
-        # Extract SOURCE_FILE from header if present
-        m = re.search(r"^#\s*SOURCE_FILE:\s*(.+)\s*$", content, flags=re.MULTILINE)
-        source_file = m.group(1).strip() if m else md_file.stem
-
-        # Remove that header line from embedding text (optional but recommended)
-        content_wo_header = re.sub(
-            r"^#\s*SOURCE_FILE:.*\n+", "", content, flags=re.MULTILINE
-        ).strip()
-
-        if len(content_wo_header) < 80:
-            continue
-
-        # Optional: detect language very lightly
-        has_ar = bool(re.search(r"[\u0600-\u06FF]", content_wo_header))
-        has_fr = bool(re.search(r"[A-Za-zÀ-ÿ]", content_wo_header))
-        language = "mixed" if has_ar and has_fr else ("ar" if has_ar else ("fr" if has_fr else "mixed"))
-
-        # Dedup hash
-        text_hash = hashlib.sha1((source_file + "||" + content_wo_header).encode("utf-8")).hexdigest()[:16]
-
-        metadata = {
-            "file": source_file,
-            "path": str(md_file),
-            "type": "md_chunk_file",
-            "language": language,
-            "chunk_id": md_file.stem,
-            "text_hash": text_hash,
-            "source": "deepseek_markdown_chunks",
-        }
-
-        all_chunks.append({"text": content_wo_header, "metadata": metadata})
-
-    logger.info(f"Total Markdown chunk files loaded: {len(all_chunks)}")
-    if not all_chunks:
-        raise HTTPException(status_code=404, detail="No valid chunks found in preprocessed Markdown files")
-
-    # Dedup by text_hash
-    seen = set()
-    deduped = []
-    for c in all_chunks:
-        h = c["metadata"]["text_hash"]
-        if h in seen:
-            continue
-        seen.add(h)
-        deduped.append(c)
-    all_chunks = deduped
-    logger.info(f"After dedup: {len(all_chunks)} chunks")
-
-    # Generate embeddings
-    texts = [c["text"] for c in all_chunks]
-    embeddings = embedding_service.generate_embeddings(texts)
-
-    # Store
-    document_chunks = [DocumentChunk(content=c["text"], metadata=c["metadata"]) for c in all_chunks]
-    vector_store.add_documents(document_chunks, embeddings)
-
+    count = await asyncio.to_thread(rebuild_index, GEN_FOLDER)
     return {
         "message": "Embeddings generated from chunk-per-file Markdown files",
         "source": "deepseek_markdown_chunks",
         "files_processed": len(md_files),
-        "chunks_created": len(all_chunks),
+        "chunks_created": count,
         "total_documents_in_store": vector_store.count(),
     }
 
