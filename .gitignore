@@ -5,3 +5,4 @@ __pycache__/
 logs/
 .env*
 plan.md
+!.env.example
