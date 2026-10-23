@@ -16,6 +16,7 @@ class Config:
 
     EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
     EMBEDDING_DIMENSION = 1024
+    MODELS_FP16 = True  # run embedding + reranker in fp16 when CUDA is available
     FAISS_INDEX_PATH = "db/faiss_index.bin"
 
     CHUNK_SIZE = None
@@ -57,6 +58,8 @@ class Config:
 
     # Reranker settings
     USE_RERANKER = False  # Set to False to disable reranking
-    RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+    RERANK_BATCH_SIZE = 32
+    RERANK_MAX_LENGTH = 512
 
 config = Config()
