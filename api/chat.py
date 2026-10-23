@@ -78,6 +78,45 @@ async def structured_chat_endpoint(payload: StructuredChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+def build_prompt(question_text: str, timings: Dict[str, float] = None) -> Tuple[list, list]:
+    """
+    Everything before the LLM call: scope detection, hybrid retrieval, scope
+    filtering and prompt assembly. Returns (context_chunks, messages).
+    The eval harness calls this directly, so it measures the same code path.
+    """
+    from config import config
+    from prompts import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
+    from utils.validation_utils import extract_question_scope, filter_chunks_by_scope
+
+    stage_times = timings if timings is not None else {}
+
+    t0 = time.perf_counter()
+    scope = extract_question_scope(question_text)
+    stage_times["scope"] = time.perf_counter() - t0
+    logger.debug(f"Detected scope: {scope}")
+
+    relevant_chunks = rag_service.retrieve_and_rerank(question_text, config.TOP_K_SEMANTIC, timings=stage_times)
+
+    t0 = time.perf_counter()
+    filtered_chunks = filter_chunks_by_scope(relevant_chunks, scope)
+    if len(filtered_chunks) == 0 and len(relevant_chunks) > 0:
+        logger.warning(f"All {len(relevant_chunks)} chunks filtered out by scope - may indicate scope mismatch")
+        # Use original chunks if filtering removed everything (prevents false negatives)
+        filtered_chunks = relevant_chunks
+    logger.info(f"Scope filtering: {len(relevant_chunks)} -> {len(filtered_chunks)} chunks")
+
+    user_prompt = USER_PROMPT_TEMPLATE.format(
+        context=rag_service.format_context_blocks(filtered_chunks),
+        question_text=question_text
+    )
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_prompt}
+    ]
+    stage_times["filter_and_prompt"] = time.perf_counter() - t0
+    return filtered_chunks, messages
+
+
 async def process_single_question(question_text: str) -> str:
     """
     Process a single question: retrieve context and generate answer.
@@ -86,53 +125,15 @@ async def process_single_question(question_text: str) -> str:
     Returns answer string.
     """
     from config import config
-    from utils.validation_utils import (
-        extract_question_scope,
-        filter_chunks_by_scope,
-        validate_answer_grounding
-    )
-    
+    from utils.validation_utils import validate_answer_grounding
+
     question_start_time = time.time()
     question_preview = question_text[:80] + "..." if len(question_text) > 80 else question_text
     
     logger.info(f"[START] Processing question: {question_preview}")
     
     try:
-        # 0. Extract question scope for pre-filtering (CPU-bound, but fast)
-        scope = extract_question_scope(question_text)
-        logger.debug(f"Detected scope: {scope}")
-        
-        # 1. Retrieve relevant context using async retrieval
-        start_time = time.time()
-        relevant_chunks = await retrieve_chunks_async(question_text, config.TOP_K_SEMANTIC)
-        retrieval_time = time.time() - start_time
-        logger.debug(f"Retrieval: {retrieval_time:.2f}s, {len(relevant_chunks)} chunks")
-        
-        # 1.5. Apply scope-based filtering to remove irrelevant chunks (CPU-bound, but fast)
-        filtered_chunks = filter_chunks_by_scope(relevant_chunks, scope)
-        
-        if len(filtered_chunks) == 0 and len(relevant_chunks) > 0:
-            logger.warning(f"All {len(relevant_chunks)} chunks filtered out by scope - may indicate scope mismatch")
-            # Use original chunks if filtering removed everything (prevents false negatives)
-            filtered_chunks = relevant_chunks
-        
-        logger.info(f"Scope filtering: {len(relevant_chunks)} -> {len(filtered_chunks)} chunks")
-        
-        # 2. Format Context with file/page headers (CPU-bound, but fast)
-        retrieved_chunks = rag_service.format_context_blocks(filtered_chunks)
-        
-        # 3. Construct Prompt
-        from prompts import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
-        
-        user_prompt = USER_PROMPT_TEMPLATE.format(
-            context=retrieved_chunks,
-            question_text=question_text
-        )
-
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt}
-        ]
+        filtered_chunks, messages = await asyncio.to_thread(build_prompt, question_text)
 
         # 4. Call LLM with async HTTP request
         start_llm = time.time()
@@ -192,18 +193,6 @@ async def process_single_question(question_text: str) -> str:
     finally:
         question_duration = time.time() - question_start_time
         logger.info(f"[END] Question completed in {question_duration:.2f}s: {question_preview}")
-
-
-async def retrieve_chunks_async(question_text: str, top_k: int):
-    """
-    Async wrapper for retrieval to avoid blocking the event loop.
-    Uses asyncio.to_thread for CPU-bound operations.
-    """
-    return await asyncio.to_thread(
-        rag_service.retrieve_and_rerank,
-        question_text,
-        top_k
-    )
 
 
 async def fix_rag_answer_async(question_text: str, source_list: list, answer: str) -> str:

@@ -96,7 +96,7 @@ class RAGService:
     # Main retrieval
     # ---------------------------
     @log_execution_time
-    def retrieve_and_rerank(self, query: str, top_k: int = None) -> List[SearchResult]:
+    def retrieve_and_rerank(self, query: str, top_k: int = None, timings: Dict[str, float] = None) -> List[SearchResult]:
         """
         Hybrid retrieval:
         1) Analyze query -> normalized + key_terms
@@ -106,7 +106,11 @@ class RAGService:
         5) Threshold filter on hybrid score (or keep all if you prefer)
         6) Rerank with BGE reranker
         7) Return top_n
+
+        If a timings dict is passed, per-stage durations in seconds are written into it.
         """
+        stage_times = timings if timings is not None else {}
+        t0 = time.perf_counter()
         from services.query_service import query_service
 
         # Use k_sem as default if top_k not specified
@@ -118,6 +122,7 @@ class RAGService:
         qa = query_service.enhance_query_for_retrieval(query)
         normalized_query = qa["normalized"]
         key_terms = qa.get("key_terms", [])
+        stage_times["analyze"] = time.perf_counter() - t0
 
         logger.info(
             f"Query analysis: {qa.get('question_type')}, families: {qa.get('document_families')}, key_terms: {key_terms}"
@@ -126,18 +131,25 @@ class RAGService:
         # 2) Semantic search
         sem_results: List[Tuple[object, float]] = []
         try:
+            t0 = time.perf_counter()
             q_emb = self.embedding_service.generate_query_embedding(normalized_query)
+            stage_times["embed"] = time.perf_counter() - t0
+            t0 = time.perf_counter()
             sem_results = self.vector_store.search(q_emb, k=k_sem) or []
+            stage_times["faiss"] = time.perf_counter() - t0
         except Exception as e:
             logger.exception(f"Semantic search failed: {e}")
 
         # 3) Lexical search
         lex_results: List[Tuple[object, float]] = []
+        t0 = time.perf_counter()
         if key_terms:
             try:
                 lex_results = self.vector_store.keyword_search(key_terms, k=k_lex) or []
             except Exception as e:
                 logger.exception(f"Lexical search failed: {e}")
+
+        stage_times["lexical"] = time.perf_counter() - t0
 
         logger.info(f"Semantic retrieved: {len(sem_results)} | Lexical retrieved: {len(lex_results)}")
 
@@ -152,6 +164,7 @@ class RAGService:
                     break
 
         # 4) Merge
+        t0 = time.perf_counter()
         merged = self._merge_hybrid(sem_results, lex_results, limit=max(k_final, self.top_n, 30))
 
         if config.DEBUG_LOG_RETRIEVAL:
@@ -177,6 +190,8 @@ class RAGService:
             logger.warning("Hybrid threshold removed all results; keeping top few as fallback.")
             kept = [SearchResult(chunk=ch, score=float(h)) for ch, h, _, _ in merged[: min(10, len(merged))]]
 
+        stage_times["merge"] = time.perf_counter() - t0
+
         # 6) Rerank with BGE reranker
         if self.use_reranker and self.reranker and kept:
             rerank_start = time.time()
@@ -187,6 +202,7 @@ class RAGService:
             kept = self.reranker.rerank(query, to_rerank, top_n=None)
             rerank_duration = time.time() - rerank_start
             logger.info(f"[RERANK END] Reranking completed in {rerank_duration:.2f}s - kept {len(kept)} results")
+            stage_times["rerank"] = rerank_duration
 
         # 7) final cut
         kept.sort(key=lambda x: x.score, reverse=True)
