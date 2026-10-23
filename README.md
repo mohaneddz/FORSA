@@ -1,539 +1,209 @@
-# 🤖 Flask-Forsa RAG System
+# Forsa
 
-**A high-performance, production-ready Retrieval-Augmented Generation (RAG) system built with FastAPI, featuring hybrid search, semantic reranking, and bilingual support (French/Arabic).**
+Bilingual (French / Arabic) question answering over Algérie Télécom's internal sales documentation: offer sheets ("argumentaires"), NGBSS operator guides and partner conventions. A FastAPI service retrieves passages with hybrid semantic + lexical search, filters them with a cross-encoder relevance gate, and asks DeepSeek V3.1 for an answer that must be grounded in those passages, or refuses.
 
-Built with **FastAPI + Python + DeepSeek/Gemini + FAISS + BGE-M3**.
+Stack: FastAPI, FAISS, BAAI/bge-m3 embeddings, BAAI/bge-reranker-v2-m3, DeepSeek V3.1 (Huawei ModelArts MaaS), PyTorch, Gradio.
 
----
+> The repository was first named "Flask-Forsa", but it has always been a FastAPI app.
 
-# 🚀 Tech Stack
-
-## **Backend Framework**
-
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Uvicorn](https://img.shields.io/badge/Uvicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)
-![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
-
-## **AI & ML Stack**
-
-![DeepSeek](https://img.shields.io/badge/DeepSeek_V3.1-000000?style=for-the-badge)
-![Gemini](https://img.shields.io/badge/Gemini_2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)
-![Transformers](https://img.shields.io/badge/Transformers-FF6F00?style=for-the-badge&logo=huggingface&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-
-## **Vector & Search**
-
-![FAISS](https://img.shields.io/badge/FAISS-0467DF?style=for-the-badge&logo=meta&logoColor=white)
-![BGE-M3](https://img.shields.io/badge/BGE--M3_Embeddings-FF6B6B?style=for-the-badge)
-![BGE Reranker](https://img.shields.io/badge/BGE_Reranker_V2-4ECDC4?style=for-the-badge)
-
-## **Data Processing**
-
-![PyMuPDF](https://img.shields.io/badge/PyMuPDF-FF0000?style=for-the-badge)
-![python-docx](https://img.shields.io/badge/python--docx-2B579A?style=for-the-badge)
-
-## **UI/Interface**
-
-![Gradio](https://img.shields.io/badge/Gradio-FF7C00?style=for-the-badge)
-
----
-
-# ⚡ Overview
-
-Flask-Forsa is a **production-grade RAG system** designed for high-accuracy question answering with strict source attribution.
-
-## Core Capabilities
-
-* **Hybrid Retrieval** — Semantic + Lexical search fusion with MinMax normalization
-* **Smart Reranking** — BGE-reranker-v2-m3 cross-encoder for precision
-* **Bilingual Support** — Native French & Arabic processing
-* **Parallel Processing** — Handle 50+ questions concurrently via ThreadPoolExecutor
-* **JSON Mode** — Structured, reliable LLM outputs with validation
-* **Answer Validation** — Grounding checks & hallucination detection
-* **Source Attribution** — Evidence-based answers with score-based citations
-* **Document Processing** — PDF, DOCX, TXT support with Gemini semantic chunking
-
-Everything runs **locally** with **full control** over your data pipeline.
-
----
-
-# 🏗️ System Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│              FastAPI REST API Endpoint                   │
-│      (Structured Chat + asyncio.gather Parallelism)      │
-└───────────────────────┬─────────────────────────────────┘
-                        │
-        ┌───────────────┴───────────────┐
-        │                               │
-┌───────▼────────┐              ┌──────▼──────┐
-│ Query Service  │              │ RAG Service │
-│ (Enhancement)  │              │  (Hybrid)   │
-│ • Normalize    │              │ • Semantic  │
-│ • Extract      │              │ • Lexical   │
-│ • Variations   │              │ • Merge     │
-└───────┬────────┘              └──────┬──────┘
-        │                               │
-        │         ┌─────────────────────┤
-        │         │                     │
-┌───────▼─────────▼───┐      ┌─────────▼──────────┐
-│  Embedding Service  │      │  Vector Store      │
-│    (BGE-M3 1024d)   │      │  (FAISS Index)     │
-│ • GPU Accelerated   │      │ • Flat Index       │
-│ • Batch Processing  │      │ • Cosine Sim       │
-└─────────────────────┘      └─────────┬──────────┘
-                                       │
-                             ┌─────────▼──────────┐
-                             │ Reranker Service   │
-                             │ (BGE Reranker V2)  │
-                             │ • Cross-Encoder    │
-                             │ • Score Override   │
-                             └─────────┬──────────┘
-                                       │
-                             ┌─────────▼──────────┐
-                             │  Validation Utils  │
-                             │ • Scope Filter     │
-                             │ • Grounding Check  │
-                             └─────────┬──────────┘
-                                       │
-                             ┌─────────▼──────────┐
-                             │   LLM Service      │
-                             │ • DeepSeek V3.1    │
-                             │ • JSON Mode        │
-                             │ • Retry Logic      │
-                             └────────────────────┘
+POST /api/chat/   { "equipe": ..., "question": { category: { id: text } } }
+        │
+        ▼
+ build_prompts(questions)                      api/chat.py, one batch per request
+        │
+        ├─ query analysis                      services/query_service.py
+        │    normalize, key terms, document family
+        ├─ semantic search                     bge-m3 (fp16, GPU) → FAISS IndexFlatIP, 945 chunks
+        │    one encode call + one FAISS search for the whole batch
+        ├─ lexical search                      keyword scorer over cached lowercase chunk text
+        ├─ hybrid merge                        min-max normalized, 0.65 semantic + 0.35 lexical
+        ├─ relevance gate                      bge-reranker-v2-m3 (fp16) scores the top 10 candidates,
+        │                                      keeps chunks with sigmoid score ≥ 0.05, at most 6;
+        │                                      same-language chunks win near-ties
+        └─ scope filter + prompt               utils/validation_utils.py, prompts.py
+        │
+        ▼
+ answer_question(...)                          concurrent, one per question
+        ├─ no chunk passed the gate → "Information non disponible dans les documents fournis."
+        │                              (no LLM call)
+        └─ DeepSeek V3.1, JSON mode, pooled aiohttp session → grounding check (logged)
 ```
 
----
+Indexing is offline: `preprocess.py` asks DeepSeek to rewrite each PDF/DOCX in `data/` as Markdown chunks in `gen/` (one file per chunk), and `rebuild_index.py --keep-chunks` (or `POST /api/embeddings/gen`) embeds them into `db/faiss_index.bin`, replacing the previous index.
 
-# 🧠 Core Algorithms
+## Performance and retrieval quality
 
-| Feature             | Algorithm                      | Description                                    |
-| ------------------- | ------------------------------ | ---------------------------------------------- |
-| Hybrid Search       | Weighted Semantic + Lexical    | MinMax normalization with 0.65/0.35 weights    |
-| Reranking           | BGE Cross-Encoder Scoring      | Neural reranking with score replacement        |
-| Query Enhancement   | Multi-pass Normalization       | Key term extraction + variations               |
-| Scope Filtering     | Entity + Family Detection      | Pre-filters chunks by question context         |
-| Answer Validation   | Grounding + Citation Analysis  | Checks answer support in sources               |
-| Deduplication       | Hash-based Chunk Keys          | SHA1 content hashing prevents duplicates       |
-| Document Chunking   | Gemini Semantic Splitting      | Context-aware chunk boundaries                 |
-| Parallel Execution  | asyncio.gather + Pure Async    | Unlimited concurrent async operations          |
+All numbers come from `eval/run_eval.py`. It runs everything before the LLM call through the same `build_prompts` function the endpoint uses, on an RTX 4070 Laptop GPU, with no network calls. The eval set is `eval/questions.json`: questions written from the indexed corpus (35 French, 15 Arabic), each naming the documents that contain the answer and the keywords a correct answer must include, plus off-topic questions that should be refused.
 
----
+| | Before | After, no reranker | After, reranker (20 candidates, no threshold) |
+|---|---|---|---|
+| Index | 3,092 vectors (each chunk 3×) | 945 unique chunks | 945 unique chunks |
+| Startup (models + index load) | 32.4 s (both models) | 18.8 s | 26.2 s, reranker loads on first query |
+| Peak GPU memory | 4,342 MB | 1,093 MB | 2,404 MB |
+| Retrieval per question, mean | 86 ms | 53 ms | 231 ms |
+| … embedding / lexical / rerank | 47 / 38 / – ms | 46 / 4 / – ms | 65 / 5 / 159 ms |
+| 55-question request, retrieval wall time | 5.74 s (thread per question) | 0.50 s (batched) | 9.72 s (batched) |
+| Source document ranked 1st (hit@1) | 0.92 | 0.98 | 0.96 |
+| hit@3 | 1.00 | 1.00 | 1.00 |
+| MRR | 0.957 | 0.990 | 0.980 |
+| hit@1 French / Arabic | 0.91 / 0.93 | 0.97 / 1.00 | 0.94 / 1.00 |
+| Answer keywords present in the LLM context | 0.99 | 1.00 | 1.00 |
+| Chunks sent to the LLM | 13.7 | 18.8 | 18.9 |
+| Off-topic questions refused | 0 / 5 | 0 / 5 | 0 / 5 |
 
-# 💽 Installation Guide
+What changed and why:
 
-## 1. Prerequisites
+- **The index held every chunk three times.** `POST /api/embeddings/gen` appended to the index instead of replacing it, and it had been run three times. The index builder now rebuilds from scratch and drops duplicate texts. 12.7 MB → 3.9 MB.
+- **The reranker loaded at startup even when disabled**, holding 2.2 GB of GPU memory. It now loads on first use, and both models run in fp16.
+- **Lexical search lowercased the whole corpus on every query.** The lowercase text is now cached: 38 ms → 4 ms.
+- **A multi-question request ran one thread per question**, and those threads contended for the GPU and the GIL: 55 questions took 5.7 s, slower than running them back to back. Retrieval now runs as one batch, taking 0.5 s without the reranker.
+- **The scope filter only looked at file names.** Every file name used to carry a broken "...Idoom Medium Business..." folder prefix, so the filter never removed anything. With clean names it started dropping the Weekend Boost and Gamers sheets, so it now also checks the chunk text.
+- **Most documents exist as a French and an Arabic twin with near-identical scores.** Chunks in the question's language now win ties; the prompt requires answering in that language anyway.
 
-- Python 3.10+
-- CUDA-compatible GPU (recommended for embeddings)
+### Reranking decision
 
-## 2. Clone & Setup
+On this set the reranker does not improve ranking: hybrid retrieval already puts the right document first 98% of the time. What it adds is an absolute relevance score. Hybrid scores are min-max normalized per query, so the best chunk always scores 1.0 and no threshold on them can tell an answerable question from an off-topic one. Sweeping the reranker threshold on the 20-candidate run, cutting to the 6 sources the prompt receives:
+
+| Threshold | hit@1 | Source in context | In-scope refused | Off-topic refused | Chunks sent |
+|---|---|---|---|---|---|
+| hybrid only, top 6 | 0.98 | 1.00 | 0 | 0 / 5 | 6.0 |
+| 0 | 0.96 | 1.00 | 0 | 0 / 5 | 6.0 |
+| 0.01 | 0.96 | 1.00 | 0 | 5 / 5 | 5.7 |
+| **0.05 (chosen)** | 0.96 | 1.00 | 0 | 5 / 5 | 5.3 |
+| 0.1 | 0.96 | 1.00 | 0 | 5 / 5 | 5.1 |
+| 0.3 | 0.96 | 1.00 | 0 | 5 / 5 | 4.1 |
+| 0.5 | 0.94 | 0.98 | 1 | 5 / 5 | 3.6 |
+
+The highest score any off-topic question reached was 0.0084. Reranking is therefore **on**, with `RERANK_MIN_SCORE = 0.05`, at most 6 chunks per question, over the top 10 hybrid candidates (the right document was always within the first two). Off-topic questions are refused without an LLM call, and the prompt carries about 5 chunks instead of 19. The cost measured with 20 candidates was 159 ms of GPU time per question (scoring 10 should take about half; not measured), which is small next to an LLM call.
+
+The LLM answer fixer (a second LLM pass that rewrote each answer) was removed. It was disabled, it would have doubled LLM time and cost per question, and its rules duplicate the system prompt.
+
+### Not measured in this pass
+
+- **LLM latency and answer accuracy.** Both need a working DeepSeek key; the keys that were in the repo are rejected by DeepSeek and Gemini, and this pass made no paid API calls. `answerKeywords` in the eval set is there so answer accuracy can be scored once one is available. The old README claimed 45–65 s per question; that could not be reproduced. The December 2025 run logs show 1.1–1.6 s of retrieval and about 3 s per LLM call, with a 59-question request finishing in 34.6 s.
+- **The shipped configuration end to end.** The table's reranker column uses 20 candidates and no threshold; the threshold rows are replayed from that run. The final settings (10 candidates, threshold 0.05) and five harder near-domain off-topic questions (Djezzy, Mobilis, Algérie Poste) are in the repo, but their run did not complete: the machine ran out of memory.
+- Raw results are committed only for the "before" run (`eval/results/baseline.json`). The two "after" columns were measured on 55 questions (50 in scope, 5 off-topic) with the code and index of commit `30dcd53` and the `--set` overrides below, before that commit's five extra off-topic questions existed; their JSON was not kept. Rerun them with the commands below.
+
+### Reproduce
 
 ```bash
-# Clone repository
-git clone <repository-url>
-cd flask-forsa
+python eval/run_eval.py --label noRerank --batch --set USE_RERANKER=false
+```
 
-# Create virtual environment
+```bash
+python eval/run_eval.py --label rerankSweep --batch --set RERANK_CANDIDATES=20 --set RERANK_MIN_SCORE=0 --set MAX_SOURCES=20
+```
+
+```bash
+python eval/threshold_sweep.py eval/results/rerankSweep.json
+```
+
+```bash
+python eval/run_eval.py --label final --batch
+```
+
+Each run writes `eval/results/<label>.json` with a summary and per-question rows (rank of the source document, context documents and scores, stage timings). It needs about 2.5 GB of GPU memory with the reranker and makes no API calls.
+
+## Setup
+
+Python 3.10+ and a CUDA GPU are recommended; on CPU both models run in fp32 and are much slower.
+
+```bash
 python -m venv venv
+```
 
-# Activate (Windows)
+```bash
 venv\Scripts\activate
+```
 
-# Activate (Linux/Mac)
-source venv/bin/activate
-
-# Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-## 3. Configure Environment
+Copy `.env.example` to `.env.local` and set `DEEPSEEK_TOKEN`. It is only needed for answering and for `preprocess.py`; retrieval and the eval run without it.
 
-Create `.env.local`:
-
-```env
-# LLM API Keys
-DEEPSEEK_TOKEN=your_deepseek_api_token
-DEEPSEEK_API_URL=https://api.modelarts-maas.com/v2/chat/completions
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-## 4. Prepare Your Data
+The committed index in `db/` covers the current corpus. To rebuild it from your own documents:
 
 ```bash
-# Add documents to data/ folder
-mkdir -p data
-# Copy your PDFs, DOCX files here
-
-# Run preprocessing with Gemini
 python preprocess.py
 ```
 
-## 5. Build Vector Index
-
 ```bash
-# Index your preprocessed chunks
-python build_index.py
-
-# Rebuild the index from scratch if needed
-python rebuild_index.py
+python rebuild_index.py --keep-chunks
 ```
 
-## 6. Launch Server
+Run the API (docs at http://localhost:8000/docs):
 
 ```bash
-# Start FastAPI server
 python main.py
-
-# Server runs at: http://localhost:8000
-# API Docs: http://localhost:8000/docs
 ```
 
-## 7. (Optional) Launch Gradio UI
+Optional Gradio UI on http://localhost:7860, talking to the API:
 
 ```bash
-# In a new terminal
 python gradio_app.py
-
-# UI runs at: http://localhost:7860
 ```
 
----
+## API
 
-# 📚 API Usage
-
-## Structured Chat Endpoint
-
-**Endpoint:** `POST /api/chat/`
-
-### Request Schema
+`POST /api/chat/` takes any number of questions grouped by category and answers them in one call:
 
 ```json
 {
   "equipe": "GhostTruth",
   "question": {
-    "category_1": {
-      "q1": "Quel est le dossier administratif requis pour Idoom?",
-      "q2": "Quels sont les avantages de l'offre Idoom Fibre?"
-    },
-    "category_2": {
-      "q1": "Comment souscrire à Idoom 4G LTE?"
-    }
-  },
-  "include_sources": false
+    "Gamers": { "q1": "Quel débit maximum atteint l'offre Idoom Fibre Gamers ?" },
+    "EKOTEB": { "q2": "كيف أشترك في تطبيق EKOTEB؟" }
+  }
 }
 ```
-
-### Response Schema
 
 ```json
 {
   "equipe": "GhostTruth",
   "reponses": {
-    "category_1": {
-      "q1": "Le dossier administratif comprend...",
-      "q2": "Les avantages de l'offre Idoom Fibre incluent..."
-    },
-    "category_2": {
-      "q1": "Pour souscrire à Idoom 4G LTE, vous devez..."
-    }
-  },
-  "sources": null
-}
-```
-
-### With Source Attribution
-
-Set `"include_sources": true`:
-
-```json
-{
-  "sources": {
-    "category_1": {
-      "q1": [
-        {
-          "file": "guide_idoom_2024.pdf",
-          "score": 0.8543,
-          "evidence": "Le dossier administratif requis comprend une copie de la CIN..."
-        },
-        {
-          "file": "procedures_algerie_telecom.pdf",
-          "score": 0.7821,
-          "evidence": "Documents nécessaires : justificatif de domicile, CIN..."
-        }
-      ]
-    }
+    "Gamers": { "q1": "..." },
+    "EKOTEB": { "q2": "..." }
   }
 }
 ```
 
----
+Other routes: `POST /api/embeddings/gen` rebuilds the index from `gen/`, `POST /api/embeddings/preprocess` runs the DeepSeek chunker, `POST /api/embeddings/add` appends documents, and `POST /api/cache/reload` reloads the index from disk.
 
-# ⚙️ Configuration Reference
+## Configuration
 
-Edit `config.py` to customize behavior:
+`config.py`, with the values that matter most:
 
-## Retrieval Settings
+| Setting | Value | Meaning |
+|---|---|---|
+| `TOP_K_SEMANTIC`, `TOP_K_LEXICAL` | 20, 20 | candidates from each retriever |
+| `HYBRID_W_SEM`, `HYBRID_W_LEX` | 0.65, 0.35 | fusion weights |
+| `USE_RERANKER` | True | relevance gate on/off |
+| `RERANK_CANDIDATES` | 10 | hybrid candidates scored per question |
+| `RERANK_MIN_SCORE` | 0.05 | sigmoid score a chunk needs to reach the LLM |
+| `MAX_SOURCES` | 6 | chunks per prompt when reranking |
+| `SAME_LANGUAGE_BONUS` | 0.05 | ranking bonus for chunks in the question's language |
+| `MODELS_FP16` | True | fp16 models on CUDA |
+| `LLM_MAX_CONNECTIONS` | 20 | pooled connections to the LLM API |
 
-```python
-TOP_K_SEMANTIC = 20          # Semantic search candidates
-TOP_K_LEXICAL = 20           # Lexical search candidates
-HYBRID_W_SEM = 0.65          # Semantic weight (0-1)
-HYBRID_W_LEX = 0.35          # Lexical weight (0-1)
-SIMILARITY_THRESHOLD = 0     # Minimum hybrid score (0 = disabled)
-```
-
-## Reranking
-
-```python
-USE_RERANKER = False                           # Enable/disable reranking
-RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"    # Cross-encoder model
-```
-
-## Answer Processing
-
-```python
-ENABLE_ANSWER_FIXER = False      # Strict RAG post-processing (not used)
-ANSWER_FIXER_TEMPERATURE = 0.1   # LLM temperature for fixes
-```
-
-## Vector Store
-
-```python
-EMBEDDING_MODEL_NAME = "BAAI/bge-m3"  # Embedding model
-EMBEDDING_DIMENSION = 1024             # Embedding dimensions
-INDEX_TYPE = "Flat"                    # FAISS index type
-FAISS_INDEX_PATH = "db/faiss_index.bin"
-```
-
-## Source Limits
-
-```python
-MIN_SOURCES = 1   # Minimum sources to return
-MAX_SOURCES = 6   # Maximum sources to return
-```
-
-## LLM Settings
-
-```python
-MODEL_NAME = "deepseek-v3.1"          # DeepSeek model
-GEMINI_MODEL = "gemini-2.5-flash"     # Gemini model for chunking
-ENABLE_LLM_WARMUP = False             # Warmup on startup
-```
-
----
-
-# 📊 Performance Metrics
-
-| Metric                    | Performance          |
-| ------------------------- | -------------------- |
-| Parallel Questions        | Up to 50 concurrent  |
-| Avg Latency (uncached)    | ~45-65s per question |
-| Retrieval Speed           | ~50s (hybrid + rerank) |
-| Reranking Speed           | ~40-60s (BGE reranker) |
-| LLM Generation            | 1-3s (DeepSeek)      |
-| Embedding Batch (GPU)     | ~100 docs/s          |
-| Index Search (FAISS)      | <1s                  |
-
-**Note:** Current configuration has reranking disabled (`USE_RERANKER = False`) and threshold at 0.
-
-There is an in-progress latency-tuning effort tracked in `PERFORMANCE_OPTIMIZATIONS.md` (and a `QUICKSTART_PERFORMANCE.md` companion doc) — not yet merged into this README, treat those as work-in-progress notes rather than final numbers.
-
----
-
-# 🔧 Advanced Features
-
-## Query Enhancement
-
-Automatically processes queries via `query_service`:
-
-- **Normalization**: Lowercase, diacritics removal
-- **Key Terms**: Extracts important words for lexical search
-- **Variations**: Generates alternative phrasings
-- **Type Detection**: Identifies question category
-
-## Scope-Based Filtering
-
-Intelligently filters chunks via `validation_utils`:
-
-- **Entity Detection**: Companies, products, services
-- **Document Families**: Categorizes by topic
-- **Question Type**: Matches chunk relevance
-
-## Answer Validation
-
-Multi-layer validation in `validation_utils`:
-
-- **Grounding Check**: Verifies answer in sources
-- **Hallucination Detection**: Flags unsupported claims
-- **Availability Check**: Detects "no info" responses
-- **Citation Accuracy**: Validates source references
-
-## Document Processing
-
-Advanced chunking with Gemini in `preprocess.py`:
-
-- **Semantic Boundaries**: Context-aware splits
-- **Metadata Extraction**: File, page, section info
-- **Multi-format**: PDF, DOCX, TXT support via `document_processor`
-
----
-
-# 📁 Project Structure
+## Project layout
 
 ```
-flask-forsa/
-├── api/
-│   ├── chat.py              # Main structured chat endpoint
-│   ├── embeddings.py        # Embedding utilities
-│   └── cache.py             # Cache management endpoints
-├── services/
-│   ├── rag_service.py       # Hybrid retrieval engine
-│   ├── llm_service.py       # LLM integration (DeepSeek)
-│   ├── embedding_service.py # BGE-M3 embeddings
-│   ├── vector_store.py      # FAISS vector operations
-│   ├── reranker_service.py  # BGE reranker (optional)
-│   ├── query_service.py     # Query enhancement
-│   └── document_processor.py # PDF/DOCX extraction
-├── utils/
-│   ├── validation_utils.py  # Answer validation & scope filtering
-│   ├── answer_fixer.py      # Post-processing (not used)
-│   └── logging_utils.py     # Performance tracking decorator
-├── data/                    # Document storage
-├── db/                      # FAISS index + metadata
-├── schemas.py               # Pydantic models
-├── config.py                # Configuration
-├── prompts.py               # System prompts
-├── preprocess.py            # Gemini-based document chunking
-├── build_index.py           # FAISS index builder
-├── main.py                  # FastAPI app
-├── gradio_app.py            # Gradio UI
-├── test_preprocess.py       # Gemini test suite
-└── README.md                # This file
+api/chat.py                 /api/chat: batched retrieval, refusals, LLM calls
+api/embeddings.py           index rebuild, preprocessing, document upload
+services/rag_service.py     hybrid retrieval, reranker gate, language tiebreak
+services/embedding_service.py, reranker_service.py, vector_store.py, query_service.py
+services/index_builder.py   gen/*.md → FAISS index
+services/llm_service.py     DeepSeek client (sync + pooled async)
+utils/validation_utils.py   scope filter and answer grounding checks
+prompts.py                  system / user prompts
+preprocess.py               DeepSeek Markdown chunker for data/
+eval/                       questions, eval runner, threshold sweep, results
 ```
 
----
+## License
 
-# 🧪 Testing
-
-## Test Gemini Setup
-
-```bash
-python test_preprocess.py
-```
-
-## Other Test Suites
-
-The repo also includes targeted tests for chunking, answer fixing, strict-RAG rules, and the API surface:
-
-```bash
-python test_ai_chunks.py
-python test_answer_fixer.py
-python test_strict_rag_rules.py
-python test_api.py
-python test_structured.py
-```
-
-## Test API with cURL
-
-```bash
-curl -X POST http://localhost:8000/api/chat/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "equipe": "TestTeam",
-    "question": {
-      "test": {
-        "q1": "Comment souscrire à Idoom?"
-      }
-    },
-    "include_sources": true
-  }'
-```
-
-## Run with Gradio UI
-
-```bash
-# Terminal 1: Start API
-python main.py
-
-# Terminal 2: Start Gradio
-python gradio_app.py
-```
-
-Visit `http://localhost:7860` for the web interface.
-
----
-
-# 📈 Monitoring & Debugging
-
-## Enable Debug Logs
-
-In `config.py`:
-
-```python
-DEBUG_LOG_RETRIEVAL = True
-```
-
-## Log Output Includes
-
-- **Retrieval Transparency**: Hybrid scores, semantic/lexical breakdown
-- **Query Enhancement**: Normalization steps, key terms, variations
-- **Validation Results**: Scope filtering, grounding checks
-- **Performance Metrics**: Timing for each pipeline stage via `@log_execution_time`
-- **Token Usage**: DeepSeek input/output tokens
-
-## Current Logging
-
-Logs are configured via `logger_config.py` and output to console with INFO level.
-
----
-
-# 🤝 Contributing
-
-This is a **private project**. Unauthorized use, reproduction, or distribution is prohibited.
-
-For authorized contributors:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-# 📄 License
-
-```
-© 2025. All rights reserved.
-Unauthorized use, reproduction, modification, or distribution
-of this project or its source code is strictly prohibited.
-```
-
-**⚠️ IMPORTANT:** This project is **private** and **fully restricted**.
-
----
-
-# 🙏 Acknowledgments
-
-**AI & ML Models:**
-- [BAAI/bge-m3](https://huggingface.co/BAAI/bge-m3) — Multilingual embeddings (1024d)
-- [BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3) — Cross-encoder reranking
-- [DeepSeek V3.1](https://www.deepseek.com/) — Advanced language model with JSON mode
-- [Google Gemini 2.5 Flash](https://deepmind.google/technologies/gemini/) — Semantic document chunking
-
-**Infrastructure:**
-- [FAISS](https://github.com/facebookresearch/faiss) — Facebook AI vector similarity search
-- [FastAPI](https://fastapi.tiangolo.com/) — Modern async Python web framework
-- [Gradio](https://gradio.app/) — ML web interfaces
-- [PyMuPDF](https://pymupdf.readthedocs.io/) — PDF processing and text extraction
-- [Transformers](https://huggingface.co/docs/transformers/) — HuggingFace ML model library
-
----
-
-**Built with ❤️ for production-grade RAG applications**
-
-*Powered by hybrid search, semantic reranking, and bilingual intelligence.*
+© 2025. All rights reserved. Unauthorized use, reproduction, modification, or distribution of this project or its source code is prohibited.
