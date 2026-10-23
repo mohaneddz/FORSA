@@ -16,6 +16,7 @@ class Config:
 
     EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
     EMBEDDING_DIMENSION = 1024
+    MODELS_FP16 = True  # run embedding + reranker in fp16 when CUDA is available
     FAISS_INDEX_PATH = "db/faiss_index.bin"
 
     CHUNK_SIZE = None
@@ -36,7 +37,7 @@ class Config:
     TOP_K_LEXICAL = 20
     HYBRID_W_SEM = 0.65
     HYBRID_W_LEX = 0.35
-    LEXICAL_SCORE_FLOOR = 0.0  
+    LEXICAL_SCORE_FLOOR = 0.0
 
     SIMILARITY_THRESHOLD = 0
     MIN_SOURCES = 1
@@ -47,16 +48,21 @@ class Config:
 
     DEBUG_LOG_RETRIEVAL = False
     ASSERT_EMBEDDING_DIM = True
-    
-    # Answer Fixer Settings
-    ENABLE_ANSWER_FIXER = False  # Enable strict RAG answer post-processing
-    ANSWER_FIXER_TEMPERATURE = 0.1  # Low temperature for strict, deterministic corrections
 
     # LLM Service Settings
     ENABLE_LLM_WARMUP = False  # Enable LLM service warmup on application startup
+    LLM_MAX_CONNECTIONS = 20  # pooled HTTP connections to the LLM API
 
     # Reranker settings
-    USE_RERANKER = False  # Set to False to disable reranking
-    RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    USE_RERANKER = True  # Set to False to disable reranking
+    RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+    RERANK_CANDIDATES = 10  # hybrid candidates scored per question
+    # Sigmoid reranker score a chunk needs to reach the LLM. On eval/questions.json
+    # off-topic questions top out below 0.01 and every in-scope question keeps
+    # its source at any value from 0.01 to 0.3 (see eval/threshold_sweep.py).
+    RERANK_MIN_SCORE = 0.05
+    RERANK_BATCH_SIZE = 32
+    RERANK_MAX_LENGTH = 512
+    SAME_LANGUAGE_BONUS = 0.05  # ranking bonus for chunks written in the question's language
 
 config = Config()

@@ -81,75 +81,17 @@ def delete_generated_chunks():
 def rebuild_index_from_chunks():
     """Rebuild FAISS index from existing chunks"""
     logger.info("\nRebuilding FAISS index from gen/ chunks...")
-    
+
     # Import here to avoid loading models unnecessarily
-    from services.vector_store import vector_store
-    from services.embedding_service import embedding_service
-    from schemas import DocumentChunk
-    from pathlib import Path
-    import json
-    import numpy as np
-    
-    gen_dir = Path("gen")
-    chunk_files = sorted(gen_dir.glob("*.md"))
-    
-    if not chunk_files:
-        logger.error("ERROR: No chunk files found in gen/")
-        logger.error("Please run preprocessing first: python preprocess.py")
+    from services.index_builder import rebuild_index
+
+    try:
+        count = rebuild_index(Path("gen"))
+    except FileNotFoundError as e:
+        logger.error(f"ERROR: {e}")
         return False
-    
-    logger.info(f"Found {len(chunk_files)} chunk files")
-    
-    # Clear existing index
-    vector_store.clear_index()
-    
-    # Process chunks in batches
-    batch_size = 100
-    all_chunks = []
-    all_texts = []
-    
-    for chunk_file in chunk_files:
-        try:
-            with open(chunk_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # Extract metadata from first line (if JSON)
-            lines = content.split('\n', 1)
-            metadata = {}
-            chunk_content = content
-            
-            if lines[0].strip().startswith('<!--') and lines[0].strip().endswith('-->'):
-                try:
-                    metadata_str = lines[0].strip()[4:-3].strip()
-                    metadata = json.loads(metadata_str)
-                    chunk_content = lines[1] if len(lines) > 1 else ""
-                except:
-                    pass
-            
-            chunk = DocumentChunk(
-                content=chunk_content.strip(),
-                metadata=metadata or {"file": chunk_file.name}
-            )
-            
-            all_chunks.append(chunk)
-            all_texts.append(chunk.content)
-            
-        except Exception as e:
-            logger.warning(f"Failed to process {chunk_file}: {e}")
-    
-    logger.info(f"Processing {len(all_chunks)} chunks...")
-    
-    # Generate embeddings in batches
-    for i in range(0, len(all_texts), batch_size):
-        batch_texts = all_texts[i:i+batch_size]
-        batch_chunks = all_chunks[i:i+batch_size]
-        
-        embeddings = embedding_service.generate_embeddings(batch_texts)
-        vector_store.add_documents(batch_chunks, embeddings)
-        
-        logger.info(f"  Processed {min(i+batch_size, len(all_texts))}/{len(all_texts)} chunks")
-    
-    logger.info(f"✓ Index rebuilt with {vector_store.count()} documents")
+
+    logger.info(f"✓ Index rebuilt with {count} documents")
     return True
 
 

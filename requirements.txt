@@ -3,9 +3,12 @@ uvicorn
 pydantic
 python-dotenv
 requests
+aiohttp
 faiss-cpu
 numpy
 sentence-transformers
+transformers>=4.40
+torch
 unstructured
 python-multipart
 gradio
